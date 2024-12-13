@@ -1,0 +1,377 @@
+{% extends 'home.html' %}
+
+
+{% load static %}
+{% block extra_css %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/downtime.css' %}">
+
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+{% endblock %}
+{% block extra_js%}{% endblock%}
+
+{% block content %}
+    <div class="home-section">
+      
+      <div class="outerdiv">
+        <h6><span> &#128994</span> Downtime Details<h6>
+        <div class="row">
+          <div class="firstbox">
+            <h3> Total Shift Time (HH:MM)</h3>
+            <hr>
+            <div class="today"><div >&nbsp; <p class="forval" id="top1"></p></div></div>
+
+          </div>
+          <div class="secondbox">
+            <h3> Available Shift Time (HH:MM)</h3>
+            <hr>
+            <div class="today"><div >&nbsp; <p class="forval" id="top2"></p></div></div>
+            
+          </div>
+          <div class="thirdbox">
+            <h3> Planned Time (HH:MM)</h3>
+            <hr>
+            <div class="today"><div >&nbsp; <p class="forval" id="top3"></p></div></div>
+      
+          </div>
+          <div class="box5">
+            <h3> Unplanned Time (HH:MM)</h3>
+            <hr>
+            <div class="today"><div >&nbsp; <p class="forval" id="top4"></p></div></div>
+
+          </div>
+
+          </div>
+        </div> 
+
+        <div id="popupForm" class="popup">
+          <div class="popup-content">
+              <span class="close-icon" onclick="closePopupForm()">&times;</span>
+      
+        
+              <div class="table-wrap" >
+                <table class="table">
+                  <thead class="thead-primary">
+                      <tr>
+                          <th>Breakdown</th>
+                          <th>Start Time</th>
+                          <th>Stop Time</th>
+                          <th>Interval</th>
+                      </tr>
+                  </thead>
+                  <tbody id="downtimeTableBody">
+                      
+                  </tbody>
+              </table>
+              </div>
+              <button class="down_but" type="submit" id="but" value=""><a href="{% url 'Exporttopdf' 'group_data' %}" style="color: inherit; text-decoration: none;"><i class='bx bxs-file-pdf'></i></a></button>
+          </div>
+        </div> 
+        <h6><span> 🟢</span>Downtime Chart<h6>
+          <div class="outerdiv1">    
+            <div class="row">
+              {% comment %} <div class="secondbox12"> {% endcomment %}
+              <div class="secondbox12">
+                
+                <h3>Downtime Analysis</h3>
+                <div class="button-section2">
+                  {% comment %} <button class="button-54" onclick="openPopupForm()" role="button">More Details</button> {% endcomment %}
+                  {% comment %} <button class="button" onclick="openPopupForm()">more details</button> {% endcomment %}
+                  <button class="button12345" onclick="openPopupForm()" ><span>More Details</span></button>
+                </div>  
+                {% comment %} <div class="box111"> {% endcomment %}
+                <div class="box111 ">
+                </div>
+              </div>
+            </div>
+            <div class="bootom">
+            <div class="firstbox12">
+              <h3>Downtime</h3>  
+              <div class="box10">
+              </div>
+            </div>
+            <div class="firstbox12">
+              <h3>Priority Alarm</h3>  
+              <div class="box10">
+                <div class="run">&nbsp; Name of Alarm :<br>&nbsp; <p class="forval1" id="run">{{most_frequent_alarm}} </p></div>
+                <div class="run">&nbsp; Duration :<br>&nbsp; <p class="forval1" id="run"> {{max_duration}} </p></div>
+                <div class="run">&nbsp; Times Occured :<br>&nbsp; <p class="forval1" id="run">{{alarm_count}} </p></div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="divfooter">
+          <p class="foot" >© 2023 Copyright:TechnoViz Automation <img class="imgg" src="{% static 'images/logo-.png' %}"></p>
+         </footer>
+          </div>
+        </div>
+        
+      </div>  
+      <script>
+        function openPopupForm() {
+          document.getElementById('popupForm').style.display = 'block';
+        }
+        // Function to close the popup form
+        function closePopupForm() {
+          document.getElementById('popupForm').style.display = 'none';
+        }
+        
+        function updateTableWithData(data) {
+          console.log(typeof data.grouped_data);
+          var tableBody = document.getElementById("downtimeTableBody");
+          tableBody.innerHTML = ""; // Clear existing content
+      
+          // Check if data.grouped_data is an array
+          if (Array.isArray(data.grouped_data)) {
+              // Iterate through the new data and append rows to the table
+              data.grouped_data.forEach(function(entry) {
+                  var row = tableBody.insertRow();
+                  var cell1 = row.insertCell(0);
+                  var cell2 = row.insertCell(1);
+                  var cell3 = row.insertCell(2);
+                  var cell4 = row.insertCell(3);
+      
+                  cell1.innerHTML = entry.alarm;
+                  cell2.innerHTML = formatTime(entry.start_time);
+            cell3.innerHTML = formatTime(entry.stop_time);
+            cell4.innerHTML = formatTimeDifference(entry.time_difference);
+              });
+          } else {
+              console.error('Data structure issue: data.grouped_data is not an array.');
+          }
+      }
+
+      function formatTime(dateTimeString) {
+        const options = { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
+        const date = new Date(dateTimeString);
+        
+        // Set the time zone offset to India Standard Time (IST)
+        date.setMinutes(date.getMinutes() + date.getTimezoneOffset() );
+    
+        return date.toLocaleString('en-US', options);
+    }
+
+function formatTimeDifference(timeDifferenceString) {
+  // Assuming timeDifferenceString is in the format P0DT00H16M00S
+  var match = timeDifferenceString.match(/(\d+)DT(\d+)H(\d+)M(\d+)S/);
+  if (match) {
+      var days = match[1];
+      var hours = match[2];
+      var minutes = match[3];
+      var seconds = match[4];
+
+      return   hours + ' hours ' + minutes + ' minutes ' ;
+  }
+
+  return timeDifferenceString; // Return as-is if the format is not recognized
+}
+      
+      
+
+          document.addEventListener("DOMContentLoaded", function () {
+            var options = {
+              series: [
+                  {
+                      name: 'Duration',
+                      type: 'column',
+                      color: '#42a9ac',
+                      data: [],
+                  },
+                  {
+                      name: 'Downtime Incidents',
+                      type: 'line',
+                      color: '#db6e10',
+                      data: [],
+                  },
+              ],
+              chart: {
+                height: 200,
+                type: 'line',
+                animations: {
+                  enabled: false
+                },
+                toolbar: {
+                  show: false,
+                }
+              },
+              plotOptions: {
+                bar: {
+                  horizontal: false,
+                  columnWidth: '20%',
+                  barWidth: '10%',
+                  borderRadius: 0,
+                  dataLabels: {
+                    total: {
+                      enabled: true,
+                      style: {
+                        fontSize: '13px',
+                        fontWeight: 900,
+                      },
+                    },
+                  },
+                },
+              },
+              stroke: {
+                curve: 'smooth',
+                width: 2
+              },
+              dataLabels: {
+                enabled: true,
+                enabledOnSeries: [1]
+              },
+              labels: [],
+              grid: {
+                show: false,
+              },
+              xaxis: {
+                type: 'category',
+                labels: {
+                  style: {
+                    colors: '#ffffff',
+                  },
+                  rotate: 0,
+                  tickAmount: 10,
+                  forceNiceScale: true,
+                },
+              },
+              yaxis: [{
+                type: 'category',
+                labels: {
+                  style: {
+                    colors: '#ffffff',
+                  },
+                  tickAmount: 10,
+                  forceNiceScale: true,
+                },
+              }, {
+                opposite: true,
+                labels: {
+                  style: {
+                    colors: '#ffffff',
+                  },
+                },
+              }],
+              legend: {
+                position: 'top',
+                offsetY: 0,
+                labels: {
+                  colors: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+                },
+              },
+              tooltip: {
+                theme: 'dark',
+              },
+            };
+        
+            var chart = new ApexCharts(document.querySelector(".box111"), options);
+            chart.render();
+        
+            console.log('Chart rendered');
+        
+            function updateChartWithData(data) {
+              chart.updateSeries([
+                  {
+                      name: 'Duration',
+                      data: data.chart_data.durationData, // Update Duration values
+                  },
+                  {
+                      name: 'Downtime Incidents',
+                      data: data.chart_data.incidentsData, // Update Incident counts
+                  },
+              ]);
+          
+              chart.updateOptions({
+                  xaxis: {
+                      categories: data.chart_data.labels, // Set chart labels
+                  },
+              });
+          }
+        
+            function updatePieChartWithData(data) {
+              var totalbreaktime = data.Formattedtotal_break_durationMinutes;
+              var totalunpladtime = data.Final_unplaned;
+              var availableruntimemin = data.Available_Run_Time;
+    
+              var pieChart = am4core.create("box10", am4charts.PieChart3D);
+              if (pieChart.logo) {
+                pieChart.logo.disabled = true;
+              }
+    
+              var legend = new am4charts.Legend();
+              legend.labels.template.fill = am4core.color("white");
+              legend.position = "right";
+              legend.valueLabels.template.fill = am4core.color("white");
+              legend.valueLabels.template.fontSize = 12;
+    
+              pieChart.legend = legend;
+              pieChart.data = [
+                {
+                  country: "Break Duration",
+                  litres: totalbreaktime,
+                  color: am4core.color('#db6e10')
+                },
+                {
+                  country: "Total Unplanned",
+                  litres: totalunpladtime,
+                  color: am4core.color('#42a9ac')
+                },
+                {
+                  country: "Available Shift Runtime",
+                  litres: availableruntimemin
+                },
+              ];
+    
+              var series = pieChart.series.push(new am4charts.PieSeries3D());
+              series.dataFields.value = "litres";
+              series.dataFields.category = "country";
+              series.ticks.template.disabled = true;
+              series.alignLabels = false;
+              series.labels.template.text = "{value.percent.formatNumber('#.0')}%";
+              series.labels.template.radius = am4core.percent(-45);
+              series.labels.template.fill = am4core.color("white");
+              series.slices.template.propertyFields.fill = "color";
+              series.startEffect = "none";
+            }
+    
+            function fetchDataAndUpdateCharts() {
+              $.ajax({
+                url: 'downtime_data',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                  try {
+                    // Parse the JSON string into a JavaScript object
+                    data.grouped_data = JSON.parse(data.grouped_data);
+                    
+                    console.log(data.grouped_data);
+                    $('#top1').text(data.FormattedTotalShiftTime);
+                    $('#top2').text(data.FormattedTotalAvailableRunTime);
+                    $('#top3').text(data.Formattedtotal_break_duration);
+                    $('#top4').text(data.formatted_final_unplaned);
+                    updateChartWithData(data);
+                    updatePieChartWithData(data);
+                    updateTableWithData(data);
+                } catch (error) {
+                    console.error('Error parsing grouped_data:', error);
+                }
+                },
+                error: function (error) {
+                  console.error('Error fetching data:', error);
+                }
+              });
+            }
+    
+            fetchDataAndUpdateCharts();
+    
+            setInterval(function () {
+              fetchDataAndUpdateCharts();
+            }, 5000);
+          });
+        </script>
+
+
+    <script src="{% static 'js/downtime.js' %}"></script>
+{% endblock%}

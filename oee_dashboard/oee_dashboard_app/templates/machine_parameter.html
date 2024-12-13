@@ -1,0 +1,82 @@
+{% extends 'home.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/machine_parameter.css' %}">
+<style>
+
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="home-section">
+    <h3 class="shift">Parameter Details</h3>
+    
+    <div class="card-form">
+        <div class="card-form__inner">
+            <form method="POST" enctype="multipart/form-data" action="{% url 'add_paremeter' %}">
+                {% csrf_token %}
+                <div id="label-container">
+                    <div class="card-form__row">
+                        <div class="card-input">
+                            <label class="card-input__label">Running</label>
+                            <input type="number" name="runn" class="card-input__input" autocomplete="off">
+                        </div>
+                        <div class="card-input">
+                            <label class="card-input__label">Production</label>
+                            <input type="number" name="pro" class="card-input__input" autocomplete="off">
+                        </div>
+                        <div class="card-input">
+                            <label class="card-input__label">Scrap</label>
+                            <input type="number" name="scra" class="card-input__input" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button type="submit" class="button12345" value="Save as JSON">Save</button>
+                    {% comment %} <button type="button" class="button12345" onclick="addErrorFields()">Add More</button> {% endcomment %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="table-header">
+        <h2 class="table-title">Parameter</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                {% for field in headers %}
+                <th>{{ field|replace_underscores }}</th>
+                {% endfor %}
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for error in paremeter_data %}
+            <tr>
+                {% for field in headers %}
+                <td>{{ error|get_attribute:field }}</td>
+                {% endfor %}
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<footer class="divfooter">
+    <p class="foot">© 2023 Copyright: TechnoViz Automation 
+        <img class="imgg" src="{% static 'images/logo-.png' %}">
+    </p>
+</footer>
+
+<script src="{% static 'js/details.js' %}"></script>
+{% endblock %}

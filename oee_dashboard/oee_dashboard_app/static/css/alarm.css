@@ -1,0 +1,840 @@
+h3.shift {
+    font-weight: 500;
+    font-size: 30px;
+}
+
+.card-form {
+    width: 65%;
+    margin-top: 3%;
+}
+
+footer.divfooter {
+    left: 87px !important;
+    position: fixed;
+    height: 24px;
+    width: 85% !important;
+    transition: var(--tran-05);
+    color: var(--text-color);
+    margin-left: 0px !important;
+    bottom: 0px;
+}
+
+.card-form {
+    width: 65%;
+    margin-top: 3%;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    background: #18283b9c;
+    border-radius: 10px;
+    position: relative;
+    left: 9.6%;
+}
+
+.card-form__inner {
+
+    box-shadow: 0 30px 60px 0 rgba(90, 116, 148, 0.4);
+    border-radius: 10px;
+    padding: 35px;
+}
+
+body.dark .card-form__inner {
+    background: #181a1e;
+    box-shadow: 0 30px 60px 0 rgb(136 142 149 / 10%);
+    border-radius: 10px;
+    padding: 35px;
+}
+
+.card-input {
+    margin-bottom: 20px;
+}
+
+
+body.dark .card-input__label {
+
+    color: #7d8da1;
+
+}
+
+body.dark .card-input__input {
+    width: 100%;
+    height: 45px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #111214;
+    color: #7d8da1;
+}
+
+
+.card-form__col {
+    flex: 1;
+}
+
+.card-form__button {
+    width: 100%;
+    height: 55px;
+    background: #2364d2;
+    border: none;
+    border-radius: 5px;
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+}
+
+.card-form__row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    /* To allow wrapping when screen is narrow */
+}
+
+.card-input {
+    flex: 1 1 30%;
+    /* Allows the inputs to take up roughly 1/3 of the width */
+    min-width: 200px;
+    /* Optional: Set a minimum width to maintain a clean layout */
+}
+
+.card-input__label {
+    font-size: 14px;
+    color: #ebe4e4;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.card-input__input {
+    width: 100%;
+    height: 45px;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #737374;
+    border-radius: 5px;
+    background: #00000000;
+}
+
+.three h1 {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.5em;
+    padding-bottom: 15px;
+    position: relative;
+}
+
+.three h1:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 5px;
+    width: 55px;
+    background-color: #111;
+}
+
+.three h1:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 2px;
+    height: 1px;
+    width: 95%;
+    max-width: 255px;
+    background-color: #333;
+}
+
+
+
+
+.button12345 {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+
+.button12345 {
+    border-radius: 4px;
+    background-color: #42a9ac;
+    border: none;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    padding: 0px;
+    width: 125px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 1px;
+    box-shadow: 0 10px 20px -8px rgba(0, 0, 0, .7);
+
+    z-index: 2;
+}
+
+.three {
+    margin-top: 2%;
+}
+
+.conta {
+    border: 1px solid white;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--table-border-color);
+}
+
+.table-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+}
+
+.card-form {
+    width: 65%;
+    margin-top: 3%;
+}
+
+footer.divfooter {
+    left: 87px !important;
+    position: fixed;
+    height: 24px;
+    width: 85% !important;
+    transition: var(--tran-05);
+    color: var(--text-color);
+    margin-left: 0px !important;
+    bottom: 0px;
+}
+
+.card-form {
+    width: 65%;
+    margin-top: 3%;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    background: #18283b9c;
+    border-radius: 10px;
+    position: relative;
+    left: 9.6%;
+}
+
+.card-form__inner {
+
+    box-shadow: 0 30px 60px 0 rgba(90, 116, 148, 0.4);
+    border-radius: 10px;
+    padding: 35px;
+}
+
+body.dark .card-form__inner {
+    background: #181a1e;
+    box-shadow: 0 30px 60px 0 rgb(136 142 149 / 10%);
+    border-radius: 10px;
+    padding: 35px;
+}
+
+.card-input {
+    margin-bottom: 20px;
+}
+
+
+body.dark .card-input__label {
+
+    color: #7d8da1;
+
+}
+
+body.dark .card-input__input {
+    width: 100%;
+    height: 45px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #111214;
+    color: #7d8da1;
+}
+
+
+.card-form__col {
+    flex: 1;
+}
+
+.card-form__button {
+    width: 100%;
+    height: 55px;
+    background: #2364d2;
+    border: none;
+    border-radius: 5px;
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+}
+
+.card-form__row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    /* To allow wrapping when screen is narrow */
+}
+
+.card-input {
+    flex: 1 1 30%;
+    /* Allows the inputs to take up roughly 1/3 of the width */
+    min-width: 200px;
+    /* Optional: Set a minimum width to maintain a clean layout */
+}
+
+.card-input__label {
+    font-size: 14px;
+    color: #ebe4e4;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.card-input__input {
+    width: 100%;
+    height: 45px;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #737374;
+    border-radius: 5px;
+    background: #00000000;
+}
+
+.three h1 {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.5em;
+    padding-bottom: 15px;
+    position: relative;
+}
+
+.three h1:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 5px;
+    width: 55px;
+    background-color: #111;
+}
+
+.three h1:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 2px;
+    height: 1px;
+    width: 95%;
+    max-width: 255px;
+    background-color: #333;
+}
+
+
+
+
+.button12345 {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+
+.button12345 {
+    border-radius: 4px;
+    background-color: #42a9ac;
+    border: none;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    padding: 0px;
+    width: 125px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 1px;
+    box-shadow: 0 10px 20px -8px rgba(0, 0, 0, .7);
+
+    z-index: 2;
+}
+
+.three {
+    margin-top: 2%;
+}
+
+
+.container {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    /* max-width: 500px; */
+
+    border: 1px solid #80808080;
+    position: relative;
+    top: 30px;
+}
+
+.conta {
+    border: 1px solid white;
+}
+
+.table-body {
+
+    max-height: 400px;
+    overflow: hidden;
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    border: 1px solid #80808080;
+    overflow-x: hidden;
+    /* Prevent horizontal scrolling */
+    padding: 3%;
+    border-radius: 2%;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+
+}
+
+
+td.status span {
+    position: relative;
+    border-radius: 30px;
+    padding: 0px 7px 1px 16px;
+}
+
+td.status span:after {
+    position: absolute;
+    top: 9px;
+    left: 4px;
+    width: 6px;
+    height: 6px;
+    content: '';
+    border-radius: 50%;
+}
+
+
+
+td.status .active {
+    background: #cff6dd;
+    color: #1fa750;
+}
+
+td.status .active:after {
+    background: #23bd5a;
+}
+
+td.status .waiting {
+    background: #fdf5dd;
+    color: #cfa00c;
+}
+
+td.status .waiting:after {
+    background: #f2be1d;
+}
+
+td.status .rej {
+    background: #fddddd;
+    color: #cf0c0c;
+}
+
+td.status .rej:after {
+    background: #f21d1d;
+}
+
+
+/* Optional: Styling for the scrollbar */
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+th,
+td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #80808080;
+    ;
+}
+
+th {
+
+    color: white;
+}
+
+tbody {
+    max-height: 300px;
+    overflow-y: auto;
+    display: block;
+}
+
+tbody::-webkit-scrollbar {
+    width: 8px;
+    /* Width of the scrollbar */
+}
+
+tbody::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Color of the scrollbar thumb */
+    border-radius: 4px;
+    /* Round edges */
+}
+
+tbody::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    /* Darker thumb on hover */
+}
+
+tbody::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    /* Background color of the scrollbar track */
+    border-radius: 4px;
+    /* Round edges */
+}
+
+thead,
+tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.container {
+    flex: 2;
+    position: relative;
+    top: 8px;
+    /* Base size for both containers */
+    height: 450px;
+    padding: 2px;
+}
+
+.container:first-child {
+    flex: 4.5;
+    /* Increase size of first container to 2.5 parts */
+}
+
+.container:last-child {
+    flex: 1.5;
+    /* Decrease size of second container to 1.5 parts */
+}
+
+:root {
+    --industrial-primary: #80808080;
+    /* Deep navy blue */
+    --industrial-secondary: #00A8E8;
+    /* Bright technical blue */
+    --industrial-accent: #FF6B35;
+    /* Safety orange */
+
+    /* Dark slate gray */
+    --industrial-neutral-light: #e9f5f900;
+    /* Soft light blue-gray */
+}
+
+body {
+    background-color: var(--industrial-neutral-light);
+    font-family: 'Arial', 'Helvetica', sans-serif;
+}
+
+.dashboard-container {
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+    padding: 20px;
+}
+
+.live-alarm-section {
+
+    overflow-y: auto;
+    padding: 15px;
+    padding-top: 0px;
+}
+
+.oee-card {
+    border: 1px solid var(--industrial-neutral-dark);
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.oee-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.alarm-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    padding-top: 0px;
+    background: #18283b9c;
+    border-radius: 10px;
+    border-left: 5px solid;
+    border-top: 1px solid #80808080;
+
+    border-right: 1px solid #80808080;
+    border-bottom: 1px solid #80808080;
+}
+
+option {
+    background-color: #18283b9c;
+    color: #efe1e1c2;
+}
+
+.badge {
+    border-radius: 10px;
+    text-align: center;
+}
+
+.alarm-critical {
+    border-left-color: #DC3545;
+    color: var(--industrial-neutral-dark);
+}
+
+.alarm-warning {
+    border-left-color: #FFC107;
+    color: var(--industrial-neutral-dark);
+}
+
+.alarm-info {
+    border-left-color: #00A8E8;
+    color: var(--industrial-neutral-dark);
+}
+
+.oee-metric {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--industrial-primary);
+}
+
+.container:last-child {
+    flex: 2;
+    height: 450px;
+    padding: 2px;
+}
+
+.live-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #28a745;
+    border-radius: 50%;
+    margin-right: 5px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--industrial-neutral-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--industrial-primary);
+    border-radius: 5px;
+}
+
+
+
+
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --background-color: #ecf0f1;
+    --card-background: #ffffff;
+    --text-color: #333;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    line-height: 1.6;
+    color: var(--text-color);
+    padding: 20px;
+}
+
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.dashboard-header {
+    background-color: #2c3e50d6;
+    color: white;
+    padding: 3px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.filter-select {
+    padding: 5px 9px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.filter-select:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.alarm-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.alarm-card {
+    border-radius: 10px;
+    padding: 20px;
+    background: #18283b9c;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #80808080;
+    border-left: 4px solid var(--secondary-color);
+
+}
+
+.alarm-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.alarm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #f1f1f1;
+    padding-bottom: 10px;
+}
+
+.alarm-header h3 {
+    font-size: 1.1rem;
+    color: #94a3b3;
+    font-weight: 600;
+}
+
+.alarm-badge {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.alarm-details {
+    display: flex;
+    flex-direction: column;
+
+}
+
+strong {
+    color: white;
+    font-weight: 400;
+}
+
+span {
+    color: white;
+    font-size: 12.5px;
+}
+
+.alarm-details div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.alarm-item.hidden {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    .alarm-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 668px) {
+    .alarm-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.alarm-paragraph {
+    width: 100%;
+    background-color: #18283b9c;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    padding: 25px;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+.alarm-detail {
+    margin-bottom: 15px;
+}
+
+.moderate {
+    color: #f39c12;
+    font-weight: bold;
+}
+
+.critical {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.alarm-icon {
+    margin-right: 8px;
+}
+
+
+.forflex {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}

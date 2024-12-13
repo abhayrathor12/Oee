@@ -1,0 +1,205 @@
+{% extends 'home.html' %}
+
+
+{% load static %}
+{% block extra_css %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/details.css' %}">
+<style>
+
+</style>
+
+{% endblock %}
+{% block extra_js%}{%endblock%}
+
+{% block content %}
+    <div class="home-section">
+      <div class="formdiv">
+
+      <h3 class="shift">Shift Details</h3>
+      <div class="form-style-10">
+        <form id="shiftForm" method="POST" action="{% url 'Detailform' %}">
+          {% csrf_token %}
+       
+          <div class="navlogo">
+            <img class="image2" src="{% static 'images/rbg.png' %}">
+      
+          </div>
+          <div class="inner-wrap">
+            <label>Shift Start Time <input type="time" name="field1" id="startTime" required /></label>
+            <label>Shift Stop Time <input type="time" name="field2" id="stopTime" required /></label>
+            <label>Ideal Cycle Time (minutes): <input type="number" name="field3" id="cycletime"  required/></label>
+            <label>Target <input type="number" name="field4" id="Target" required /></label>
+          </div>
+          <div class="button-section">
+            <input type="hidden" name="timeDifference" id="timeDifference" value="{{ checking }}">
+            <input type="submit" name="Sign Up" id="submitButton" />
+
+          </div>
+          <br>
+      
+          
+        </form>
+        <div>
+          <h4>Total Available : {{result_str}} Hr.  
+            
+          <label id="timeDifferenceLabel"></label>
+        </div>
+     
+        <div id="popupForm" class="popup">
+          <div class="popup-content">
+            <span class="close-icon" onclick="closePopupForm()">&times;</span>
+            <form method="POST" action="{% url 'popupData' %}">
+              {% csrf_token %}
+              <h2>Planned Downtime</h2>
+              <div>
+                <label>Descrption:</lable>
+                <input class="fname" type="text" name="desc" placeholder="Descrption" required/>
+                <label>Start time:</lable>
+                <input type="time" name="breakstart" placeholder="start time" required />
+                <label>Stop time:</lable>
+                <input type="time" name="breakstop" placeholder="start time" required/>
+                <label>Requested by:</lable>
+                <input class="fname" type="Email" name="Requestemail" placeholder="Email" required />
+                <label>Approved by:</lable>
+                <input class="fname" type="Email" name="Approvedemail" placeholder="Email" required />
+              </div>
+              <button type="submit" href="/">Submit</button>
+            </form>
+         
+          </div>
+        </div>
+        <div class="button-section2">
+          <button class="button" onclick="openPopupForm()">+</button>
+        </div>
+      </div>
+      <div>
+     
+      </div>
+
+      <div class="emailtab">
+        <table class="table" id="table">
+            <thead>
+                <tr>
+                    <th>Planned Downtime</th>
+                    <th>start-time</th>
+                    <th>stop-time</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                {% for j in breakdatafromdb %}
+                <tr>
+                <td>{{j.Descriptionis}}</td>
+                <td>{{j.BreakStartTime}}</td>
+                <td>{{j.BreakStopTime}}</td>
+                <td class="delbut"><a href="{% url 'DeleteBreak' j.id %}"><i class='bx bx-trash'></i></a></button></td>  
+                </tr>
+            </tbody>
+            {% endfor %}                                                                                                                                                          
+        </table>  
+    </div> 
+    <footer class="divfooter">
+      <p class="foot">© 2023 Copyright:TechnoViz Automation <img class="imgg"  src="{% static 'images/logo-.png' %}"></p>
+     
+     </footer>
+    </div>
+      
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          // Get the ShiftTimeStop value
+          var shiftTimeStopString = "{{ ShiftTimeStop }}";
+      
+          // Parse ShiftTimeStop to create a Date object
+          var shiftTimeStop = new Date();
+          var timeParts = shiftTimeStopString.split(':');
+          shiftTimeStop.setHours(parseInt(timeParts[0], 10));
+          shiftTimeStop.setMinutes(parseInt(timeParts[1], 10));
+      
+          // Get the current time
+          var currentTime = new Date();
+      
+          // Get the submit button
+          var submitButton = document.getElementById('submitButton');
+      
+          // Update the button's disabled state based on conditions
+          updateButtonState();
+      
+          // Add click event listener to the button
+          submitButton.addEventListener('click', function (event) {
+              // If the button is disabled, show an alert
+              if (submitButton.classList.contains('disabled-button')) {
+                  event.preventDefault(); // Prevent the form from submitting
+                  alert('The form cannot be submitted because  there is a shift running.');
+              }
+          });
+      
+          // Function to update the button's disabled state based on conditions
+          function updateButtonState() {
+              // Disable the button if the current time is greater than ShiftTimeStop
+              if (currentTime < shiftTimeStop) {
+                  submitButton.classList.add('disabled-button');
+              } else {
+                  submitButton.classList.remove('disabled-button');
+              }
+          }
+      
+          // Update the button's state periodically (e.g., every minute)
+          setInterval(function () {
+              currentTime = new Date(); // Update current time
+              updateButtonState();
+          }, 1000); // Update every 60 seconds
+      });
+      
+            // Function to compare real-time with ShiftTimeStop and enable/disable the submit button
+         document.getElementById("shiftForm").addEventListener("submit", function (event) {
+              event.preventDefault();
+          
+              const startTime = document.getElementById("startTime").value;
+              const stopTime = document.getElementById("stopTime").value;
+          
+              const startTimeObj = new Date(`1970-01-01T${startTime}`);
+              const stopTimeObj = new Date(`1970-01-01T${stopTime}`);
+          
+              // Check if stop time is earlier than start time (overnight shift)
+              if (stopTimeObj < startTimeObj) {
+                // Adjust the stop time to be on the next day
+                stopTimeObj.setDate(stopTimeObj.getDate() + 1);
+              }
+          
+              // Calculate the time difference in milliseconds
+              let timeDifference = stopTimeObj - startTimeObj;
+          
+              // Convert the time difference to hours and minutes
+              const hours = Math.floor(timeDifference / 3600000);
+              const minutes = Math.floor((timeDifference % 3600000) / 60000);
+              
+              // Display the time difference in the label
+              const timeDifferenceLabel = document.getElementById("timeDifferenceLabel");
+              timeDifferenceLabel.textContent = `Time Difference: ${hours} hours and ${minutes} minutes`;
+          
+              // Update the hidden input with the calculated time difference
+              document.getElementById("timeDifference").value = `${hours}:${minutes}`;
+          
+              // Enable the submit button only if the current time is before the shift end time
+    
+          
+              // Now submit the form programmatically
+              event.target.submit();
+            });
+          
+      
+            function openPopupForm() {
+              document.getElementById("popupForm").style.display = "block";
+            }
+          
+            // Function to close the popup form
+            function closePopupForm() {
+              document.getElementById("popupForm").style.display = "none";
+            }
+   
+      </script>
+    <script src="{% static 'js/details.js' %}"></script>
+    {%endblock%}
+    
+

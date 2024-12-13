@@ -1,0 +1,192 @@
+{% extends 'home.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/alarm.css' %}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+
+<style>
+    
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateCardVisibility() {
+        // Get the number selected from the dropdown
+        const numCards = document.getElementById('card-select').value;
+        
+        // Get all the error cards
+        const cards = document.querySelectorAll('.error-card');
+        
+        // Loop through all cards and hide those that exceed the selected number
+        cards.forEach((card, index) => {
+            if (index < numCards) {
+                card.style.display = 'block'; // Show the card
+            } else {
+                card.style.display = 'none'; // Hide the card  
+            }
+        });
+    }
+    
+    // Call this function initially to set the correct visibility when the page loads
+    updateCardVisibility();
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="home-section">
+    <h3 class="shift">Alarm Details</h3>
+    
+<div class="forflex">    
+    <div class="container">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h2>Alarm Management Dashboard</h2>
+                <select id="alarmdateFilter" class="filter-select">
+                    <option value="all">Time Period</option>
+                    <option value="today">Today Alarms</option>
+                    <option value="previous_week">Previous Week Alarms</option>
+                    <option value="last_month">Last Month Alarms</option>
+                </select>
+                <select id="alarmFilter" class="filter-select">
+                    <option value="all">All Alarms</option>
+                    <option value="1">Top 1 Alarms</option>
+                    <option value="3">Top 3 Alarms</option>
+                    <option value="5">Top 5 Alarms</option>
+                </select>
+                
+            </div>
+            
+    
+            <div class="alarm-list" id="alarmList">
+                {% for stats in combined_error_stats %}
+                <div class="alarm-card alarm-item" data-rank="{{ forloop.counter }}">
+                    <div class="alarm-header">
+                        <h3>{{ stats.0 }}</h3> <!-- stats.0 corresponds to the label -->
+                        <span class="alarm-badge"> # {{ forloop.counter }}</span>
+                    </div>
+                    <div class="alarm-details">
+                        <div>
+                            <span>Total Alarm Time</span>
+                            <strong>{{ stats.1 }} min</strong> <!-- stats.1 corresponds to duration -->
+                        </div>
+                        <div>
+                            <span>Total Incidents</span>
+                            <strong>{{ stats.2 }}</strong> <!-- stats.2 corresponds to incidents -->  
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+<div class="container">
+    <div class="table-header">
+        <h2 class="table-title">Live Alarm</h2>
+    </div>
+
+    <div class="col-3 live-alarm-section">
+        <h3 class="mb-3" style="color: var(--industrial-primary);">
+            
+        </h3>
+        
+
+
+
+
+        <div class="alarm-paragraph">
+            {% for alarm in live_alarms %}
+            <div class="alarm-detail">
+                {% if alarm.status == 'critical' %}<i class="fas fa-exclamation-circle alarm-icon critical"></i>
+                {% else %}<i class="fas fa-exclamation-triangle alarm-icon moderate"></i>{% endif %}
+                
+                At <strong>{{alarm.time}}</strong>, a <span class=" {% if alarm.status == 'critical' %}critical{% elif alarm.status == 'moderate' %}moderate{% else %}alarm-info{% endif %}">{{alarm.status}}</span> alarm was triggered for the <strong>{{alarm.name}}</strong>. 
+            </div>
+            {% endfor%}
+        </div>
+    
+          </div>
+    </div>
+
+</div>
+
+<footer class="divfooter">
+    <p class="foot">© 2023 Copyright: TechnoViz Automation 
+        <img class="imgg" src="{% static 'images/logo-.png' %}">
+    </p>
+</footer>
+
+<script src="{% static 'js/details.js' %}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const alarmFilter = document.getElementById("alarmFilter");
+        const alarmDateFilter = document.getElementById("alarmdateFilter");
+        const alarmList = document.getElementById("alarmList");
+    
+        function fetchFilteredAlarms() {
+            const topAlarms = alarmFilter.value;
+            const timePeriod = alarmDateFilter.value;
+    
+            fetch(`/filter-alarms?time_period=${timePeriod}&top_alarms=${topAlarms}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    // Clear the existing alarm list
+                    alarmList.innerHTML = "";
+    
+                    // Check if data is returned successfully
+                    if (data.status === "success" && data.data.length > 0) {
+                        data.data.forEach((alarm, index) => {
+                            // Create card container
+                            const card = document.createElement("div");
+                            card.className = "alarm-card alarm-item";
+                            card.dataset.rank = index + 1;
+    
+                            // Create header
+                            const header = document.createElement("div");
+                            header.className = "alarm-header";
+                            header.innerHTML = `
+                                <h3>${alarm.name}</h3>
+                                <span class="alarm-badge"># ${index + 1}</span>
+                            `;
+    
+                            // Create details container
+                            const details = document.createElement("div");
+                            details.className = "alarm-details";
+                            details.innerHTML = `
+                                <div>
+                                    <span>Total Alarm Time</span>
+                                    <strong>${alarm.total_time} min</strong>
+                                </div>
+                                <div>
+                                    <span>Total Incidents</span>
+                                    <strong>${alarm.occurrences}</strong>
+                                </div>
+                            `;
+    
+                            // Append header and details to card
+                            card.appendChild(header);
+                            card.appendChild(details);
+    
+                            // Append card to alarm list
+                            alarmList.appendChild(card);
+                        });
+                    } else {
+                        // Show a "No data found" message if no data is returned
+                        alarmList.innerHTML = "<p>No alarms found for the selected criteria.</p>";
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching alarms:", error);
+                    alarmList.innerHTML = "<p>Error loading alarms. Please try again.</p>";
+                });
+        }
+    
+        // Attach event listeners
+        alarmFilter.addEventListener("change", fetchFilteredAlarms);
+        alarmDateFilter.addEventListener("change", fetchFilteredAlarms);
+    });
+    
+</script>
+{% endblock %}

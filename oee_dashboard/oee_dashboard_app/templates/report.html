@@ -1,0 +1,154 @@
+{% extends 'home.html' %}
+
+
+{% load static %}
+{% block extra_css %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/report.css' %}">
+
+{% endblock %}
+{% block extra_js%}{%endblock%}
+
+{% block content %}
+    <div class="home-section">
+      <div class="formdiv">
+        <div class="report">  
+           <form id="reportForm" method="POST" action="{% url 'ReportData' %}">
+                            {% csrf_token %}
+                            {% comment %} <h1>Select Report Period</h1> {% endcomment %}
+                            
+                            <p> OEE Report </p>
+                            <label id="oe" for="report"> OEE :&nbsp; <input type="radio" name="name12" id="radio6" onclick="handelradioclick('radio6')" value="valu7" ></label>
+                            <label id="dt"for="report">Downtime :&nbsp; <input type="radio" name="name13" id="radio5" onclick="handelradioclick('radio5')" value="valu8" ></label><br>
+                            <input type="radio" name="name1" id="radio1" value="valu1" onclick="disableFields(false)">
+                            <select name="start2" id="myList" onchange="report()" >
+                                {% comment %} <option> SELECT </option> {% endcomment %}
+                                <option value="week" > Last One Week </option>
+                                <option value="month"> Last 1 Month </option>
+                                <option value="half_year"> Last 6 Month </option>
+                                <option value="year"> Last 12 Month </option>
+                            </select>
+                            <br>
+                            <br>
+                        
+                            <input type="radio" name="name1" id="radio2" value="valu2" onclick="disableFields(true)">
+
+                            <label for="report">Start Date:</label><br>
+                            <input type="date" name="start"  required>  <br> <lable class="to">&nbsp; &nbsp;</lable>
+                     
+                            <label id="end" for="report">End Date:</label>
+                            <br>
+                            <input type="date" name="end" required > 
+                            <br>
+                        
+                            
+                            <br> 
+                            <button type="submit" id="submitButton" value="" onclick="validateForm(event)">Submit</button>
+
+                        </form>
+                        <div id="popupDiv" class="popup">
+                          <div class="popup-content">
+                              <span class="close" onclick="closePopup()">&times;</span>
+                              <p>Please select an Time Span before submitting.</p>
+                          </div>
+                        </div>
+                        <div id="popupDiv1" class="popup" style="display: none;">
+                          <div class="popup-content">
+                              <span class="close" onclick="closePopup1()">&times;</span>
+                              <p>No Data Available.</p>
+                          </div>
+                      </div>
+                      <div id="popupDiv2" class="popup" style="display: none;">
+                        <div class="popup-content">
+                            <span class="close" onclick="closePopup2()">&times;</span>
+                            <p>Please Select Any Report.</p>
+                        </div>
+                    </div>
+                    <div id="popupDiv3" class="popup" style="display: none;">
+                      <div class="popup-content">
+                          <span class="close" onclick="closePopup3()">&times;</span>
+                          <p>Please Select  an Appropriate Option.</p>
+                      </div>
+                  </div>
+            </div>
+
+      </div>
+      {% if weekdays %}
+  {% if weekdays.0.production %}
+    {# Show the table when weekdays is not empty and the first item has a 'production' attribute (assuming it's a production record) #}
+    <div class="emailtab my-table">
+      <div class="tbl-container">
+        <table class="table" id="table">
+          <thead>
+            <tr>
+              <th>Production</th>
+              <th>Performance</th>
+              <th>Availability</th>
+              <th>Quality</th>
+              <th>OEE</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            {% for j in weekdays %}
+              <tr>
+                <td>{{ j.production }}</td>
+                <td>{{ j.performance }}</td>
+                <td>{{ j.availability }}</td>
+                <td>{{ j.quality }}</td>
+                <td>{{ j.oee }}</td>
+                <td>{{ j.logged_on|date:"F d, Y" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <button class="down_but" type="submit" id="but" value=""><a href="{% url 'Exporttopdf' 'weekdays' %}" style="color: inherit; text-decoration: none;"><i class='bx bxs-file-pdf'></i></a></button>
+    </div>
+  {% endif %}
+  {% if weekdays.0.NameOfAlarm %}
+    {# Show the other table when weekdays is not empty and the first item has a 'NameOfAlarm' attribute (assuming it's an alarm record) #}
+    <div class="emailtab my-table">
+      <div class="tbl-container">
+        <table class="table" id="table">
+          <thead>
+            <tr>
+              <th>Alarm</th>
+              <th>Alarm Status</th>
+              <th>Timing</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            {% for j in weekdays %}
+              <tr>
+                <td>{{ j.NameOfAlarm }}</td>
+                <td>{{ j.Alarm_value }}</td>
+                <td>{{ j.Timing|date:"F d, Y" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <button class="down_but" type="submit" id="but" value=""><a href="{% url 'Exporttopdf' weekdays %}" style="color: inherit; text-decoration: none;"><i class='bx bxs-file-pdf'></i></a></button>
+    </div>
+  {% endif %}
+{% endif %}
+     {% if weekdays == 0 %}
+     <script>
+      // JavaScript code to show the pop-up
+      document.getElementById("popupDiv1").style.display = "block";
+    </script>
+
+     {% endif %}
+
+    
+    <footer class="divfooter">
+      
+      <p class="foot">© 2023 Copyright:TechnoViz Automation <img class="imgg"  src="{% static 'images/logo-.png' %}"></p>
+     
+     
+     </footer>
+    </div>
+    
+    <script src="{% static 'js/report.js' %}"></script>
+{%endblock%}

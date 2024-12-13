@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Technoviz Automation</title>
+    {% load static %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/Logo.png' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.28.0/dist/apexcharts.min.js"></script>
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/t-radar"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  {% block extra_css %}
+  <style>
+    .red { border-left: 5px solid #D10000; }
+    .blue { border-left: 5px solid #0000FF; }
+    .orange { border-left: 5px solid #FFA500; }
+    .green { border-left: 5px solid #00FF00; }
+
+    
+  </style>
+  {% endblock%}
+  
+</head>
+  <body>
+    
+    <div id="nav-bar">
+      <input id="nav-toggle" type="checkbox" checked="checked"/>
+      <div id="nav-header"><img  class="nav_img" src="{% static 'images/logo-.png' %}">
+        <label for="nav-toggle"><span id="nav-toggle-burger"></span></label>
+      </div>
+      <div id="nav-content">
+        <div class="nav-button"><a href="{% url 'HomePage' %}"><i class="bx bx-grid-alt"></i><span>Dashboard</span></a></div>
+        <div class="nav-button"><a href="{% url 'DeatailPageload' %}"><i class='bx bx-detail'></i><span>Shift Details</span></a></div>
+        <div class="nav-button"><a href="{% url 'ReportPage' %}"><i class="bx bx-pie-chart-alt-2"></i><span>Report</span></a></div>
+        <div class="nav-button"><a href="{% url 'downtimepage' %}"><i class="bx bx-trending-down"></i><span>Downtime</span></a></div>
+        <div class="nav-button"><a href="{% url 'add_error' %}"><i class="bx bx-message-square-add"></i><span>Error Config</span></a></div>
+        <div class="nav-button"><a href="{% url 'add_paremeter' %}"><i class="bx bx bx-cog"></i><span>Parameter Config</span></a></div>
+        <div class="nav-button"><a href="{% url 'Alarmpage' %}"><i class="bx bx bx-alarm-exclamation"></i><span> Alarm</span></a></div>
+        <div class="nav-button"><a href="https://technovizautomation.com/"><i class='bx bx-question-mark icon'></i><span>About us</span></a></div>
+        <div id="nav-content-highlight"></div>
+      </div>
+      
+    </div>
+    {% block content %}
+    <div class="home-section">
+      <div class="test"></div>
+    
+      <div class="outerdiv">
+        
+      
+        <h6><span> &#128994</span> MONTHLY RECORD </span><button class="fullscreen-btn" id="fullscreen-button">
+          <svg viewBox="0 0 448 512" height="1em" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z"
+              fill="#ffffff" 
+            ></path>
+          </svg>
+          <span class="tooltip">Fullscreen</span>
+        </button><h6>
+          <div class="row">
+            <div class="firstbox">
+              <h3><i class='bi bi-speedometer'></i>&nbsp; Performance</h3>
+              <hr>
+              <div class="today"><div class="vl"  id="for_col0" >&nbsp;<p class="forval" id="perfor_1"></p><p class="din">Today</p></div></div>
+              <div class="month"><div class="v2" id="for_col4">&nbsp; <p class="forval" id="mon_per"> %</p><p class="din">Monthly</p></div></div>
+            </div>
+            <div class="secondbox">
+              <h3> <i class="bi bi-patch-check-fill"></i></i>&nbsp; Quality</h3>
+              <hr>
+              <div class="today"><div class="vl" id="for_col1" >&nbsp;<p class="forval" id="qual_1"></p><p class="din">Today</p></div></div>
+              <div class="month"><div class="v4" id="for_col5">&nbsp; <p class="forval" id="mon_qal"> %</p><p class="din">Monthly</p></div></div>
+            </div>
+            <div class="thirdbox">
+              <h3> <i class='bi bi-clock-fill'></i></i>&nbsp; Availability</h3>
+              <hr>
+              <div class="today"><div class="vl"  id="for_col2">&nbsp;<p class="forval" id="avail_1"></p><p class="din">Today</p></div></div>
+              <div class="month"><div class="v6" id="for_col6" >&nbsp; <p class="forval" id="mon_avl"> %</p><p class="din">Monthly</p></div></div>
+            </div>
+            <div class="box5">
+              <h3> <i class='bx bxs-pie-chart-alt-2'></i></i>&nbsp; OEE</h3>
+              <hr>
+              <div class="today"><div class="vl" id="for_col3" >&nbsp;<p class="forval" id="oee_1"></p><p class="din">Today</p></div></div>
+              <div class="month"><div class="v8" id="for_col7">&nbsp; <p class="forval" id="mon_oee"> %</p><p class="din">Monthly</p></div></div>
+            </div>
+          </div>
+        </div>  
+        <h6><span> 🟢</span>CURRENT DETAILS<h6>
+          <div class="outerdiv1">    
+            <div class="row">
+              <div class="firstbox1">
+                <h3 class="round1"></h3>
+                <h4>Performance</h4>
+                <h3 class="values" id="perfor_11"> 
+                </h3>
+                <div class="box">
+                </div>
+              </div>
+              <div class="secondbox1">
+                <h3 class="round2"></h3>
+                <h4>Quality</h4>
+                <h3 class="values" id="qual_11"></h3>
+                <div class="box1">
+                </div>
+              </div>
+              <div class="thirdbox1">
+                <h3 class="round3"></h3>
+                <h4>Availability</h4>
+                <h3 class="values" id="avail_11"></h3>
+                <div class="box2">
+                </div>
+              </div>
+              <div class="box11">
+                <h3 class="round4"></h3>
+                <h4>OEE</h4>
+                <h3 class="values" id="oee_11"></h3>
+                <div class="box9">
+                </div>
+              </div>
+            </div>
+        </div>
+        
+        <h6><span> 🟢</span>GRAPH<h6>
+        <div class="outerdiv1">    
+          <div class="row">
+            <div class="firstbox12">
+              <h3>Production & Defective</h3>
+              <div class="box10">
+              </div>
+            </div>
+            <div class="secondbox12">
+              <h3>Actual production</h3>
+              <div class="box111">
+              </div>
+            </div>
+          </div>
+
+          <h6><span> 🟢</span>Current shift status</h6>
+          <div class="row">
+            <div class="firstbox">
+              <h3><i class='bx bx-power-off'></i>&nbsp; Machine Status</h3>
+              <hr>
+              <div id="stat"></div>
+            </div>
+            <div class="secondbox">
+              <h3> <i class='bx bx-time'></i>&nbsp; Run Time (Min)</h3>
+              <hr>
+              <div class="today1"><div class="run">&nbsp; Shift Run Time :<br>&nbsp; <p class="forval1" id="run"> </p></div></div>
+            </div>
+            <div class="thirdbox">
+              <h3> <i class='bx bx-time'></i>&nbsp; shift Time left (HH:MM:SS)</h3>
+              <hr>
+              <div class="today1"><div class="run">&nbsp; Remaning shift Time :<br>&nbsp; <p class="forval1" id="run12"> </p></div></div>
+            </div>
+            <div class="box5">
+              <h3> <i class='bx bx-time'></i>&nbsp; Breakdown Time (HH:MM)</h3>
+              <hr>
+              <div class="today1">&nbsp;<p class="forval1" id="top4"> </p></div>
+              {% comment %} <div class="today"><div >&nbsp; <p class="forval" id="top4"></p></div></div> {% endcomment %}
+            </div>
+          </div>
+        </div> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+         
+          
+          <h6><span> 🟢</span>Target</h6>
+  
+        <div class="row1">
+          <div class="firstbox1212">
+            <h3 class="lastdiv"> <i class='bx bxs-component'></i></i>&nbsp; Actual Total Production</h3>
+            <hr>
+            <div class="today1"><div >&nbsp; <p class="forval1" id="fot_production"></p></div></div>
+          </div>
+          <div class="firstbox1212">
+            <h3 class="lastdiv"> <i class='bx bx-target-lock'></i></i>&nbsp; Total Shift Target</h3>
+            <hr>
+            <div class="today1"><div>&nbsp; <p class="forval1" id="fot_target"></p></div></div>
+          </div>
+          <div class="firstbox1212">
+            <h3 class="lastdiv"> <i class='bx bxs-x-circle'></i></i>&nbsp; Rejected Units</h3>
+            <hr>
+            <div class="today1"><div >&nbsp; <p class="forval1" id="fot_rej"></p></div></div>
+          </div>
+          <div class="firstbox1212">
+            <h3 class="lastdiv"> <i class='bx bx-badge-check'></i></i>&nbsp; Accepted Units</h3>
+            <hr>
+            <div class="today1"><div>&nbsp; <p class="forval1" id="fot_accp"></p></div></div>
+          </div>
+           <div class="firstbox1212">
+            <h3 class="lastdiv"> <i class="bx bxs-down-arrow-circle"></i>&nbsp; Remaning Target</h3>
+            <hr>
+            <div class="today1"><div>&nbsp; <p class="forval1" id="fot_rem"></p></div></div>   
+          </div> 
+        </div>
+           
+      </div>
+      
+      <footer class="divfooter">
+        <p class="foot" >© 2023 Copyright:TechnoViz Automation <img  class="imgg" src="{% static 'images/logo-.png' %}"></p>
+       </footer>
+      </div>
+    </div>
+    {% endblock %}
+    
+  
+    <script src="{% static 'js/home.js' %}"></script>
+    {% block extra_js %}
+  <script>
+  
+    $(document).ready(function () {
+      function updateData() {
+        $.ajax({ 
+          url: 'home_page',
+          type: 'GET',
+          dataType: 'json',
+          success: function (data) {
+            // Update the content of the dynamic element
+            console.log(data);
+  
+            // Set the color based on Final_performance value
+            var colorClass;
+            if (data.Final_performance === 0) {
+              colorClass = 'red';
+            } else if (data.Final_performance < 30) {
+              colorClass = 'red';
+            } else if (data.Final_performance < 60) {
+              colorClass = 'orange';
+            } else {
+              colorClass = 'green';
+            }
+
+            var colorClass1;
+            if (data.Final_Quality === 0) {
+              colorClass1= 'red';
+            } else if (data.Final_Quality < 30) {
+              colorClass1 = 'red';
+            } else if (data.Final_Quality < 60) {
+              colorClass1 = 'orange';
+            } else {
+              colorClass1 = 'green';
+            }
+
+            var colorClass2;
+            if (data.Final_Availabilty === 0) {
+              colorClass2 = 'red';
+            } else if (data.Final_Availabilty < 30) {
+              colorClass2 = 'red';
+            } else if (data.Final_Availabilty < 60) {
+              colorClass2 = 'orange';
+            } else {
+              colorClass2 = 'green';
+            }
+
+
+            var colorClass3;
+            if (data.Final_OEE === 0) {
+              colorClass3 = 'red';
+            } else if (data.Final_OEE < 30) {
+              colorClass3 = 'red';
+            } else if (data.Final_OEE < 60) {
+              colorClass3 = 'orange';
+            } else {
+              colorClass3 = 'green';
+            }
+
+            var colorClass4;
+            if (data.final_performance_1 === 0) {
+              colorClass4 = 'red';
+            } else if (data.final_performance_1 < 30) {
+              colorClass4 = 'red';
+            } else if (data.final_performance_1 < 60) {
+              colorClass4 = 'orange';
+            } else {
+              colorClass4 = 'green';
+            }
+
+            var colorClass5;
+            if (data.final_quality_1 === 0) {
+              colorClass5= 'red';
+            } else if (data.final_quality_1 < 30) {
+              colorClass5 = 'red';
+            } else if (data.final_quality_1 < 60) {
+              colorClass5 = 'orange';
+            } else {
+              colorClass5 = 'green';
+            }
+
+            var colorClass6;
+            if (data.final_availability_1 === 0) {
+              colorClass6 = 'red';
+            } else if (data.final_availability_1 < 30) {
+              colorClass6 = 'red';
+            } else if (data.final_availability_1 < 60) {
+              colorClass6 = 'orange';
+            } else {
+              colorClass6 = 'green';
+            }
+
+
+            var colorClass7;
+            if (data.final_oee_1 === 0) {
+              colorClass7 = 'red';
+            } else if (data.final_oee_1 < 30) {
+              colorClass7 = 'red';
+            } else if (data.final_oee_1 < 60) {
+              colorClass7 = 'orange';
+            } else {
+              colorClass7 = 'green';
+            }
+
+            $('#for_col0').removeClass('red blue orange green').addClass(colorClass);
+            $('#for_col1').removeClass('red blue orange green').addClass(colorClass1);
+            $('#for_col2').removeClass('red blue orange green').addClass(colorClass2);
+            $('#for_col3').removeClass('red blue orange green').addClass(colorClass3);
+
+            $('#for_col4').removeClass('red blue orange green').addClass(colorClass4);
+            $('#for_col5').removeClass('red blue orange green').addClass(colorClass5);
+            $('#for_col6').removeClass('red blue orange green').addClass(colorClass6);
+            $('#for_col7').removeClass('red blue orange green').addClass(colorClass7);
+
+        
+            $('#perfor_1').text(data.Final_performance);
+            $('#avail_1').text(data.Final_Availabilty);
+            $('#oee_1').text(data.Final_OEE);
+            $('#qual_1').text(data.Final_Quality);
+
+           
+
+            $('#perfor_11').text(data.Final_performance);
+            $('#avail_11').text(data.Final_Availabilty);
+            $('#oee_11').text(data.Final_OEE);
+            $('#qual_11').text(data.Final_Quality);
+
+            
+            $('#mon_per').text(data.final_performance_1 + '%');
+            $('#mon_qal').text(data.final_quality_1 + '%');
+            $('#mon_avl').text(data.final_availability_1 + '%');
+            $('#mon_oee').text(data.final_oee_1 + '%');
+           
+            
+      
+          },
+          error: function (error) {
+            console.log('Error:', error);
+          }
+        });
+      }
+  
+      updateData();
+  
+      setInterval(function () {
+        updateData();
+      }, 1000);
+    });
+  
+      
+      document.addEventListener("DOMContentLoaded", function (data) {
+
+        console.log("dicthjrhkfhfkhfkh",data);
+        var optionsBar = {
+          series: [
+            {
+              name: 'Production',
+              data: [],
+            },
+            {
+              name: 'Scrap',
+              data: [],
+              color: '#ee574d',
+            },
+          ],
+          chart: {
+            type: 'bar',
+            height: 195,
+            stacked: true,
+            animations: {
+              enabled: false,
+            },
+            toolbar: {
+              show: false,
+            },
+            zoom: {
+              enabled: true,
+            },
+          },
+          responsive: [
+            {
+              breakpoint: 480,
+              options: {
+                legend: {
+                  position: 'bottom',
+                  offsetX: -10,
+                  offsetY: 0,
+                },
+              },
+            },
+          ],
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              columnWidth: '40%',
+              borderRadius: 0,
+              dataLabels: {
+                total: {
+                  enabled: false,
+                  style: {
+                    fontSize: '13px',
+                    fontWeight: 900,
+                    color:'#ffffff',
+                  },
+                },
+              },
+            },
+          },
+          xaxis: {
+            categories: ['Last 4 day', 'Last 3 day', 'Last 2 day', 'Yesterday', 'Today'],
+            labels: {
+              style: {
+                colors: '#ffffff',
+              },
+            },
+          },
+          yaxis: {
+            labels: {
+              style: {
+                colors: '#ffffff',
+              },
+            },
+            axisBorder: {
+              show: false, // Hide the y-axis line
+            },
+            axisTicks: {
+              show: false, // Hide the y-axis ticks
+            },
+          },
+          grid: {
+            show: false, // Hide the background grid
+          },
+          labels: {
+            style: {
+              colors: '#ffffff',
+            },
+          },
+          legend: {
+            position: 'top',
+            offsetY: 0,
+            labels: {
+              colors: ['#FFFFFF', '#FFFFFF'], // Set the colors for each legend item
+            },
+          },
+          fill: {
+            opacity: 1,
+          },
+          tooltip: {
+            theme: 'dark',
+          },
+        };
+
+        var optionsLine = {
+          series: [
+            {
+              name: 'Accepted',
+              data: [],
+            },
+            
+          ],
+          chart: {
+            height: 195,
+            type: 'line',
+            animations: {
+              enabled: false,
+            },
+            toolbar: {
+              show: false,
+            },
+            zoom: {
+              enabled: false,
+            },
+          },
+          annotations: {
+            yaxis: [
+              {
+                y: 0,
+                borderColor: '#00E396',
+                label: {
+            
+                  style: {
+                    color: '#fffff',
+                
+                  },
+                  text: 'Target',
+                },
+              },
+            ],
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            width:3,
+            curve: 'straight',
+          },
+          grid: {
+            show: false, 
+          },
+          xaxis: {
+            type: 'category',
+            categories: [] , // Set the categories to your datetime values
+            labels: {
+              show: true,
+              style: {
+                colors: '#ffffff',
+              },
+            },
+          },
+          yaxis: {
+        
+            
+            
+            
+            labels: {
+              style: {
+                colors: '#ffffff',
+              },
+              formatter: function (value) {
+                return Math.round(value);
+              },
+            },
+            
+          },
+          legend: {
+            position: 'top',
+            offsetY: 0,
+            labels: {
+              colors: ['#FFFFFF', '#FFFFFF'],
+            },
+          },
+          tooltip: {
+            theme: 'dark',
+          },
+        };
+
+        var commonOptions = {
+         
+          chart: {
+            type: "radialBar",
+            animations: {
+              enabled: false,
+            },
+          },
+          colors:  ["#0a7ee9", "#24a7b7", "#614196", "#228f63"],
+          plotOptions: {
+            radialBar: {
+              hollow: {
+                margin: 0,
+                size: "60%",
+                background: "",
+              },
+              track: {
+                dropShadow: {
+                  enabled: true,
+                  top: 2,
+                  left: 0,
+                  blur: 50,
+                  opacity: 5.15,
+                  background: "#1cbd00",
+                },
+              },
+              dataLabels: {
+                name: {
+                  offsetY: -10,
+                  color: "#fff",
+                  fontSize: "13px",
+                },
+                value: {
+                  color: "#fff",
+                  fontSize: "30px",
+                  show: false,
+                },
+                animations: {
+                  enabled: false,
+                },
+              },
+            },
+          },
+          fill: {
+            type: "solid",
+            gradient: {
+              shade: "dark",
+              type: "vertical",
+              gradientToColors: ["#38d2f7"],
+              stops: [0, 100],
+            },
+          },
+          stroke: {
+            lineCap: "round",
+          },
+          labels: [""],
+        };
+
+        // Create instances of ApexCharts for each chart
+        var chart1 = new ApexCharts(document.querySelector(".box"), commonOptions);
+        chart1.render();
+
+        var chart2 = new ApexCharts(document.querySelector(".box1"), commonOptions);
+        chart2.render();
+
+        var chart3 = new ApexCharts(document.querySelector(".box2"), commonOptions);
+        chart3.render();
+
+        var chart4 = new ApexCharts(document.querySelector(".box9"), commonOptions);
+        chart4.render();
+
+        var barChart = new ApexCharts(document.querySelector(".box10"), optionsBar);
+        barChart.render();
+
+        var lineChart = new ApexCharts(document.querySelector(".box111"), optionsLine);
+        lineChart.render();
+
+        console.log('Bar chart rendered');
+
+        function updateCharts(data) {
+          var maxY = parseInt(data.target) + 100;
+          // Update series data for each chart
+          console.log("Max Y value:", maxY);
+
+          console.log('last_datetime_values:', data.last_datetime_values);
+            
+          chart1.updateSeries([data.Final_performance || 0]);
+          chart2.updateSeries([data.Final_Quality || 0]);
+          chart3.updateSeries([data.Final_Availabilty || 0]);
+          chart4.updateSeries([data.Final_OEE || 0]);
+          barChart.updateSeries([
+                {
+                  name: 'Production',
+                  data: data.ProductionGraphData,
+                },
+                {
+                  name: 'Scrap',
+                  data: data.ScrapGraphData,
+                },
+              ]);
+
+              lineChart.updateSeries([
+              {
+                name: 'Accepted',
+                data: data.production_scrap_values,
+              },
+             
+            ]);
+            lineChart.updateOptions({
+              xaxis: {
+                categories: data.free_times,
+            
+              },
+              annotations: {
+                yaxis: [
+                  {
+                    y: data.target || 0, // Provide a default value or adjust as needed
+                    borderColor: '#00E396',
+                    label: {
+                      borderColor: '#00E396',
+                      style: {
+                        color: '#fff',
+                        background: '#00E396',
+                      },
+                      text: 'Target',
+                    },
+                  },
+                ],
+              },
+              yaxis: {
+                tickAmount:10,
+                min: 0,
+                max: parseInt(maxY),
+                label: {
+              
+                  style: {
+                    color: '#ffffff',
+                  
+                  },
+                
+                },
+              },
+            });
+            
+          }
+       
+    
+
+        function updateData() {
+          $.ajax({
+            url: 'home_page',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+              // Update the content of the dynamic element
+          
+              console.log(data);
+              console.log('last_production_values:', data.last_production_values);
+              console.log('last_defective_values:', data.last_defective_values); 
+              console.log('target:', data.target);
+              console.log('last_datetime_values:', data.last_datetime_values);  
+              console.log(data.remaining_time,"checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+              $('#run').text(data.Runtime_is );
+              $('#top4').text(data.formatted_final_unplaned );
+              
+              $('#run12').text(data.remaining_time);
+              
+              // Call the function to update charts with new data
+              updateCharts(data);
+
+              // ... (rest of your existing code for updating other elements)
+            },
+            error: function (error) {
+              console.log('Error:', error);
+              console.error('Error:', xhr, status, error);
+            }
+          });
+        }
+
+        // Initial data update
+        updateData();
+
+        // Set interval for periodic data update
+        setInterval(function () {
+          updateData();
+        }, 1000);
+      });
+
+      
+      
+      
+      function populateUserData() {
+          // Use AJAX to get user data based on the selected customer
+          $.ajax({
+              url: "{% url 'foractualval' %}",  
+              method: "GET",
+              success: function (accdata) {
+                  // Update the form fields with the fetched user data
+                  $('#fot_production').text(accdata.Production_data);
+                  $('#fot_rej').text(accdata.Scrap_data);
+                  $('#fot_accp').text(accdata.acceptedP1);
+                  $('#fot_target').text(accdata.target);
+                  $('#fot_rem').text(accdata.target_left1);
+      
+                  // Update the status icon based on conditions
+                  if (accdata.Running_value) {
+                    $('#stat').html('&#128994; RUNNING'); // Green
+                   
+                } else if (accdata.flag_error == true) {
+                    $('#stat').html('&#128992; ERROR'); // Orange
+                  
+                } else {
+                    $('#stat').html('&#128308; STOP'); // Red
+                    // Reset previous error state
+                }
+      
+                  // Store the updated error state in localStorage
+                 
+              },
+              error: function (error) {
+                  console.log("Error fetching user data:", error);
+              }
+          });
+      }
+      
+      setInterval(populateUserData, 1000);
+      
+    
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Function to toggle fullscreen mode
+      function toggleFullscreen() {
+          if (!document.fullscreenElement) {
+              document.documentElement.requestFullscreen().catch(err => {
+                  console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+              });
+          } else {
+              if (document.exitFullscreen) {
+                  document.exitFullscreen().catch(err => {
+                      console.error(`Error attempting to exit full-screen mode: ${err.message} (${err.name})`);
+                  });
+              }
+          }
+      }
+  
+      // Event listener for fullscreen button
+      document.getElementById('fullscreen-button').addEventListener('click', toggleFullscreen);
+  });
+    </script>
+{% endblock %}
+  </body>
+</html>

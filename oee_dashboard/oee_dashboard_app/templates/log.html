@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!-- Created By CodingLab - www.codinglabweb.com -->
+<html lang="en" dir="ltr">
+
+<head>
+	{% load static %}
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login Form | CodingLab</title>
+	<link rel="stylesheet" href="{% static 'css/logo.css' %}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+</head>
+
+<body>
+	<div class="container">
+		<div class="wrapper">
+			<div class="title"><span>Login Here</span></div>
+			<form method="POST" action="{% url 'login_data' %}">
+				{% csrf_token %}
+				<div class="row">
+					<i class="fas fa-user"></i>
+					<input type="text" placeholder="Email or Phone" name="Username" required>
+				</div>
+				<div class="row">
+					<i class="fas fa-lock"></i>
+					<input type="password" placeholder="Password" name="pass" required>
+				</div>
+			 	<div class="pass"><a href="{% url 'update_password' %}">Forgot password?</a></div> 
+				<div class="row button">
+					<input type="submit" value="Login">
+				</div>
+
+			</form>
+
+		</div>
+	</div>
+	{% if messages %}
+	<ul class="messages">
+		{% for message in messages %}
+		<li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
+			<div class="popup popup--icon -error js_error-popup popup--visible">
+				<div class="popup__background"></div>
+				<div class="popup__content">
+					<h3 class="popup__title">
+						Credentials not matched
+					</h3>
+					<p></p>
+					<p>
+						<button class="button1 button--error" data-for="js_error-popup"
+							onclick="hidePopup()">Close</button>
+					</p>
+				</div>
+			</div>
+			</li>
+			{% endfor %}
+	</ul>
+	{% endif %}
+</body>
+
+<script>
+
+	function hidePopup() {
+		const popupEl = document.querySelector('.js_error-popup');
+		popupEl.classList.remove('popup--visible');
+	}
+</script>
+
+</html>

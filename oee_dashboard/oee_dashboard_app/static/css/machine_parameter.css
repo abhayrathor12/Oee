@@ -1,0 +1,246 @@
+h3.shift {
+    font-weight: 500;
+    font-size: 30px;
+    margin-top: 20px;
+}
+
+.card-form {
+    width: 65%;
+    margin-top: 3%;
+}
+
+footer.divfooter {
+    left: 87px !important;
+    position: fixed;
+    height: 24px;
+    width: 85% !important;
+    transition: var(--tran-05);
+    color: var(--text-color);
+    margin-left: 0px !important;
+    bottom: 0px;
+}
+
+.card-form {
+    width: 65%;
+    margin-top: 3%;
+    border: 1px solid rgba(128, 128, 128, 0.5);
+    background: #18283b9c;
+    border-radius: 10px;
+    position: relative;
+    left: 9.6%;
+}
+
+.card-form__inner {
+
+    box-shadow: 0 30px 60px 0 rgba(90, 116, 148, 0.4);
+    border-radius: 10px;
+    padding: 35px;
+}
+
+body.dark .card-form__inner {
+    background: #181a1e;
+    box-shadow: 0 30px 60px 0 rgb(136 142 149 / 10%);
+    border-radius: 10px;
+    padding: 35px;
+}
+
+.card-input {
+    margin-bottom: 20px;
+}
+
+
+body.dark .card-input__label {
+
+    color: #7d8da1;
+
+}
+
+body.dark .card-input__input {
+    width: 100%;
+    height: 45px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #111214;
+    color: #7d8da1;
+}
+
+
+.card-form__col {
+    flex: 1;
+}
+
+.card-form__button {
+    width: 100%;
+    height: 55px;
+    background: #2364d2;
+    border: none;
+    border-radius: 5px;
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+}
+
+.card-form__row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    /* To allow wrapping when screen is narrow */
+}
+
+.card-input {
+    flex: 1 1 30%;
+    /* Allows the inputs to take up roughly 1/3 of the width */
+    min-width: 200px;
+    /* Optional: Set a minimum width to maintain a clean layout */
+}
+
+.card-input__label {
+    font-size: 14px;
+    color: #ebe4e4;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.card-input__input {
+    width: 100%;
+    height: 45px;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #737374;
+    border-radius: 5px;
+    background: #00000000;
+}
+
+.three h1 {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.5em;
+    padding-bottom: 15px;
+    position: relative;
+}
+
+.three h1:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 5px;
+    width: 55px;
+    background-color: #111;
+}
+
+.three h1:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 2px;
+    height: 1px;
+    width: 95%;
+    max-width: 255px;
+    background-color: #333;
+}
+
+
+
+
+.button12345 {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+
+.button12345 {
+    border-radius: 4px;
+    background-color: #42a9ac;
+    border: none;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    padding: 0px;
+    width: 125px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 1px;
+    box-shadow: 0 10px 20px -8px rgba(0, 0, 0, .7);
+
+    z-index: 2;
+}
+
+.three {
+    margin-top: 2%;
+}
+
+
+.container {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    max-width: 900px;
+    margin: 0px auto;
+    border: 1px solid #80808080;
+    position: relative;
+    top: 30px;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--table-border-color);
+}
+
+.table-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+}
+
+.table-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.table-filter input {
+    padding: 8px 12px;
+    border: 1px solid var(--table-border-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+table th,
+table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #80808080;
+}
+
+table th {
+
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    color: #ebe4e4;
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+table tr:hover {
+    background-color: #f3f4f62a;
+    transition: background-color 0.3s ease;
+}
