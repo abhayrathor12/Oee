@@ -1276,23 +1276,16 @@ def Alarmpage(request):
     )
 
 
+from collections import defaultdict
+from datetime import datetime, timedelta
+from django.db.models import F
+
 def filter_alarms(request):
     time_period = request.GET.get("time_period", "all")
-    top_alarms = request.GET.get("top_alarms", "0")  # Default to "0" as a string
-    print(time_period, "time", top_alarms, "topp")
-    # Convert `top_alarms` to an integer or handle "all"
-    try:
-        top_alarms = int(top_alarms)
-    except ValueError:
-        if top_alarms == "all":
-            top_alarms = None
-        else:
-            return JsonResponse({"error": "Invalid value for top_alarms"}, status=400)
-
-    # Determine date range based on `time_period`
     today = datetime.today()
     start_date = None
 
+    # Determine the time range based on the selected time period
     if time_period == "today":
         start_date = today.date()
     elif time_period == "previous_week":
@@ -1300,44 +1293,48 @@ def filter_alarms(request):
     elif time_period == "last_month":
         start_date = (today - timedelta(days=30)).date()
 
-    # Fetch data based on the time range
+    # Filter the data based on the time range
     if start_date:
         alarm_data = ErrorDb.objects.filter(Timing__date__gte=start_date)
     else:
         alarm_data = ErrorDb.objects.all()
-    print(alarm_data, "alarm daa ")
-    # Calculate error statistics
-    error_stats = {}
-    for alarm in alarm_data:
-        error_name = alarm.NameOfAlarm
-        if error_name not in error_stats:
-            error_stats[error_name] = {"total_time": 0, "occurrences": 0}
 
-        # Calculate time differences for alarms
-        if alarm.Alarm_value == "True":
-            start_time = alarm.Timing
-        elif alarm.Alarm_value == "False":
-            end_time = alarm.Timing
-            if start_time and end_time:
-                duration = (end_time - start_time).total_seconds() / 60
-                error_stats[error_name]["total_time"] += duration
-                error_stats[error_name]["occurrences"] += 1
-
-    # Sort errors by total time (descending) and get the top N
-    sorted_errors = sorted(
-        error_stats.items(), key=lambda x: x[1]["total_time"], reverse=True
+    # Fetch fresh data for every request
+    alarm_data = alarm_data.order_by('NameOfAlarm', 'Timing').values(
+        'NameOfAlarm', 'Alarm_value', 'Timing'
     )
-    if top_alarms:
-        sorted_errors = sorted_errors[:top_alarms]
-    print(sorted_errors)
-    # Prepare response data
-    response_data = [
-        {
-            "name": error[0],
-            "total_time": error[1]["total_time"],
-            "occurrences": error[1]["occurrences"],
-        }
-        for error in sorted_errors
-    ]
+
+    # Initialize a dictionary to store the results
+    error_stats = defaultdict(lambda: {"total_time": 0, "occurrences": 0})
+    alarm_pairs = defaultdict(list)
+
+    # Group alarms by name and track active times
+    for alarm in alarm_data:
+        alarm_pairs[alarm['NameOfAlarm']].append((alarm['Alarm_value'], alarm['Timing']))
+
+    # Calculate occurrences and total time
+    for alarm_name, events in alarm_pairs.items():
+        start_time = None
+        for value, timing in events:
+            if value == "True":
+                start_time = timing
+            elif value == "False" and start_time:
+                # Calculate the duration and reset start_time
+                duration = (timing - start_time).total_seconds() / 60
+                error_stats[alarm_name]["total_time"] += duration
+                error_stats[alarm_name]["occurrences"] += 1
+                start_time = None  # Reset for the next pair
+
+    # Prepare the response data
+    response_data = {
+        "incidents": [
+            {"name": error, "occurrences": stats["occurrences"]}
+            for error, stats in error_stats.items()
+        ],
+        "times": [
+            {"name": error, "total_time": stats["total_time"]}
+            for error, stats in error_stats.items()
+        ],
+    }
 
     return JsonResponse({"status": "success", "data": response_data})

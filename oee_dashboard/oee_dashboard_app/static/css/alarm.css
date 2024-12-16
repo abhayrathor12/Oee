@@ -631,6 +631,25 @@ option {
     margin-right: 5px;
     animation: pulse 1.5s infinite;
 }
+.chartfor{
+    display: flex;
+    flex-direction: row;
+}
+.time{
+    width: 50%;
+}
+.incident{
+    width: 50%;
+}
+
+.maindiv {
+    position: relative;
+    top: 41px;
+    border: 1px solid #80808080;
+    padding: 23px;
+    border-radius: 10px;
+    background-color: #18283b9c;
+}
 
 @keyframes pulse {
     0% {
@@ -821,6 +840,9 @@ span {
     margin-bottom: 15px;
 }
 
+.alarm-detail {
+    font-size: 13px;
+}
 .moderate {
     color: #f39c12;
     font-weight: bold;
