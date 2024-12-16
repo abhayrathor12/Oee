@@ -60,10 +60,12 @@
 
                 <div class="chartfor">
                     <div class="time">
-                        <canvas id="incidents-chart" width="400" height="280"></canvas>
+                        <div class="forhed"><h1>Occurrences</h1><span><img class="foroccur" src="{% static "images/alert.png" %}"</span></div>
+                        <canvas id="incidents-chart" ></canvas>
                     </div>
                     <div class="incident">
-                        <canvas id="times-chart" width="400" height="280"></canvas>
+                        <div class="forhed"><h1>Time (Minutes)</h1><span><img class="fortime" src="{% static "images/clock.png" %}"</span></div>
+                        <canvas id="times-chart" ></canvas>
                     </div>
                 </div>
 
@@ -107,55 +109,70 @@
 <script src="{% static 'js/details.js' %}"></script>
 <script>
     let incidentsChart = null;
-        let timesChart = null;
-
-        function renderChart(canvasId, data, label, bgColor, borderColor) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            if (canvasId === "incidents-chart" && incidentsChart) {
-                incidentsChart.destroy();
-            } else if (canvasId === "times-chart" && timesChart) {
-                timesChart.destroy();
-            }
-        
-            const chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.map(item => item.name),
-                    datasets: [{
-                        label: label,
-                        data: data.map(item => canvasId === "incidents-chart" ? item.occurrences : item.total_time),
-                        backgroundColor: bgColor,
-                        borderColor: borderColor,
-                        borderWidth: 1,
-                        barThickness: 20, // Fixed bar width in pixels
-                        maxBarThickness: 30, // Maximum bar width
-                    }]
+    let timesChart = null;
+    
+    function renderChart(canvasId, data, label, bgColor, borderColor, axisLabelColor) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+        gradient.addColorStop(0, bgColor); // Start color (top)
+        gradient.addColorStop(1, 'rgba(0,0,0,0)'); // Transparent at the bottom
+    
+        if (canvasId === "incidents-chart" && incidentsChart) {
+            incidentsChart.destroy();
+        } else if (canvasId === "times-chart" && timesChart) {
+            timesChart.destroy();
+        }
+    
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(item => item.name),
+                datasets: [{
+                    label: label, // This label will be hidden
+                    data: data.map(item => canvasId === "incidents-chart" ? item.occurrences : item.total_time),
+                    backgroundColor: gradient, // Apply the gradient here
+                    borderColor: borderColor,
+                    borderWidth: 1,
+                    barThickness: 36, // Fixed bar width in pixels
+                    maxBarThickness: 36 // Maximum bar width
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false // Hide the legend
+                    }
                 },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            ticks: {
-                                autoSkip: false // Prevent skipping of labels if there are many
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#9d9faf', // Set X-axis label color
+                            autoSkip: false // Prevent skipping of labels if there are many
+                        },
+                        grid: {
+                            display: false // Remove grid lines for X-axis
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#9d9faf', // Set Y-axis label color
+                            stepSize: 5, // Set the interval between tick marks
+                            callback: function (value) {
+                                return value; // Optional: Customize tick labels if needed
                             }
                         },
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 5, // Set the interval between tick marks
-                                callback: function (value) {
-                                    return value; // Optional: Customize tick labels if needed
-                                }
-                            }
+                        grid: {
+                            display: false // Remove grid lines for Y-axis
                         }
                     }
                 }
-            });
-        
-            if (canvasId === "incidents-chart") incidentsChart = chart;
-            if (canvasId === "times-chart") timesChart = chart;
-        }
-
+            }
+        });
+    
+        if (canvasId === "incidents-chart") incidentsChart = chart;
+        if (canvasId === "times-chart") timesChart = chart;
+    }
         document.getElementById('time-period-dropdown').addEventListener('change', function () {
             const timePeriod = this.value;
 

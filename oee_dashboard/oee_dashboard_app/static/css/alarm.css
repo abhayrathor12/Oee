@@ -513,7 +513,7 @@ tbody tr {
     position: relative;
     top: 8px;
     /* Base size for both containers */
-    height: 450px;
+    height: 366px;
     padding: 2px;
 }
 
@@ -635,21 +635,41 @@ option {
 .chartfor {
     display: flex;
     gap: 1%;
-    height: 290px;
-    margin-top: 30px;
+    height: 302px;
+    margin-top: 10px;
     flex-direction: row;
 }
 
 .time {
     width: 50%;
-    border: 1px solid #80808080;
+    /* border: 1px solid #80808080; */
     background-color: #18283b9c;
     border-radius: 2%;
 }
-
+img.foroccur {
+    width: 28px;
+    position: relative;
+    top: -35px;
+    left: 11px;
+}
+img.fortime {
+    width: 28px;
+    position: relative;
+    top: -35px;
+    left: 11px;
+}
+h1 {
+    color: #c4c5cd;
+    font-size: 23px;
+    padding-left: 15px;
+    left: 33px;
+    position: relative;
+    padding-top: 15px;
+    font-weight: 100;
+}
 .incident {
     width: 50%;
-    border: 1px solid #80808080;
+    /* border: 1px solid #80808080; */
     background-color: #18283b9c;
     border-radius: 2%;
 }
@@ -850,6 +870,9 @@ span {
 
 .alarm-detail {
     margin-bottom: 15px;
+    font-size: 13px;
+    border-bottom: 1px solid #ccc; /* Adds a light underline */
+    padding-bottom: 10px; 
 }
 
 .alarm-detail {
