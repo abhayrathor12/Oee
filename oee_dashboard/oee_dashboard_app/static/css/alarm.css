@@ -631,25 +631,37 @@ option {
     margin-right: 5px;
     animation: pulse 1.5s infinite;
 }
-.chartfor{
+
+.chartfor {
     display: flex;
+    gap: 1%;
+    height: 290px;
+    margin-top: 30px;
     flex-direction: row;
 }
-.time{
+
+.time {
     width: 50%;
-}
-.incident{
-    width: 50%;
+    border: 1px solid #80808080;
+    background-color: #18283b9c;
+    border-radius: 2%;
 }
 
-.maindiv {
+.incident {
+    width: 50%;
+    border: 1px solid #80808080;
+    background-color: #18283b9c;
+    border-radius: 2%;
+}
+
+/* .maindiv {
     position: relative;
     top: 41px;
     border: 1px solid #80808080;
     padding: 23px;
     border-radius: 10px;
-    background-color: #18283b9c;
-}
+
+} */
 
 @keyframes pulse {
     0% {
@@ -710,7 +722,7 @@ body {
 
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+
 }
 
 .dashboard-header {
@@ -843,6 +855,7 @@ span {
 .alarm-detail {
     font-size: 13px;
 }
+
 .moderate {
     color: #f39c12;
     font-weight: bold;

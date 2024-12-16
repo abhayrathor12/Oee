@@ -44,42 +44,31 @@
         <div class="dashboard">
             <div class="dashboard-header">
                 <h2>Alarm Details</h2>
-                <select id="alarmdateFilter" class="filter-select">
-                    <option value="all">Time Period</option>
-                    <option value="today">Today Alarms</option>
-                    <option value="previous_week">Previous Week Alarms</option>
-                    <option value="last_month">Last Month Alarms</option>
-                </select>
-                <select id="alarmFilter" class="filter-select">
-                    <option value="all">All Alarms</option>
-                    <option value="1">Top 1 Alarms</option>
-                    <option value="3">Top 3 Alarms</option>
-                    <option value="5">Top 5 Alarms</option>
-                </select>
+                <div>
+                    <label for="time-period-dropdown">Select Time Period:</label>
+                    <select id="time-period-dropdown" class="filter-select">
+                        <option value="all">All</option>
+                        <option value="today">Today</option>
+                        <option value="previous_week">Previous Week</option>
+                        <option value="last_month">Last Month</option>
+                    </select>
+                   
+                </div>
                 
             </div>
             
-    
-            <div class="alarm-list" id="alarmList">
-                {% for stats in combined_error_stats %}
-                <div class="alarm-card alarm-item" data-rank="{{ forloop.counter }}">
-                    <div class="alarm-header">
-                        <h3>{{ stats.0 }}</h3> <!-- stats.0 corresponds to the label -->
-                        <span class="alarm-badge"> # {{ forloop.counter }}</span>
+
+                <div class="chartfor">
+                    <div class="time">
+                        <canvas id="incidents-chart" width="400" height="280"></canvas>
                     </div>
-                    <div class="alarm-details">
-                        <div>
-                            <span>Total Alarm Time</span>
-                            <strong>{{ stats.1 }} min</strong> <!-- stats.1 corresponds to duration -->
-                        </div>
-                        <div>
-                            <span>Total Incidents</span>
-                            <strong>{{ stats.2 }}</strong> <!-- stats.2 corresponds to incidents -->  
-                        </div>
+                    <div class="incident">
+                        <canvas id="times-chart" width="400" height="280"></canvas>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
+
+            
+    
         </div>
     </div>
 <div class="container">
@@ -108,26 +97,7 @@
     </div>
 
 </div>
-<div class="maindiv">
-<div>
-    <label for="time-period-dropdown">Select Time Period:</label>
-    <select id="time-period-dropdown">
-        <option value="all">All</option>
-        <option value="today">Today</option>
-        <option value="previous_week">Previous Week</option>
-        <option value="last_month">Last Month</option>
-    </select>
-    <button id="filter-btn">Filter</button>
-</div>
-<div class="chartfor">
-    <div class="time">
-        <canvas id="incidents-chart" width="400" height="200"></canvas>
-    </div>
-    <div class="incident">
-        <canvas id="times-chart" width="400" height="200"></canvas>
-    </div>
-</div>
-</div>
+
 <footer class="divfooter">
     <p class="foot">© 2023 Copyright: TechnoViz Automation 
         <img class="imgg" src="{% static 'images/logo-.png' %}">

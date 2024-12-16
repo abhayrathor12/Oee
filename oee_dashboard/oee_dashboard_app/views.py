@@ -211,6 +211,7 @@ def HomePage(request):
     performance_list_sum = sum(performance_list_1)
     availability_list_sum = sum(availability_list_1)
     quality_list_sum = sum(quality_list_1)
+
     oee_list_sum = sum(oee_list_1)
 
     production_len = len(production_list_1)
