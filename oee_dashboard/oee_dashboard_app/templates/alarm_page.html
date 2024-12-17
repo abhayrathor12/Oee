@@ -37,7 +37,7 @@
 
 {% block content %}
 <div class="home-section">
-    <h3 class="shift">Alarm Details</h3>
+    {% comment %} <h3 class="shift">Alarm Details</h3> {% endcomment %}
     
 <div class="forflex">    
     <div class="container">
@@ -99,7 +99,12 @@
     </div>
 
 </div>
-
+<div class="forflex-down">    
+  
+  <div class="container1">
+    <h3 class="shift">Alarm Details</h3> 
+  </div>
+</div>
 <footer class="divfooter">
     <p class="foot">© 2023 Copyright: TechnoViz Automation 
         <img class="imgg" src="{% static 'images/logo-.png' %}">

@@ -183,7 +183,9 @@ body.dark .card-input__input {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    /* padding: 20px; */
+    padding-left: 20px;
+    padding-top: 4px;
     border-bottom: 1px solid var(--table-border-color);
 }
 
@@ -555,10 +557,9 @@ body {
 }
 
 .live-alarm-section {
-
     overflow-y: auto;
     padding: 15px;
-    padding-top: 0px;
+    padding-top: 14px;
 }
 
 .oee-card {
@@ -618,7 +619,7 @@ option {
 
 .container:last-child {
     flex: 2;
-    height: 450px;
+    height: 367px;
     padding: 2px;
 }
 
@@ -646,18 +647,21 @@ option {
     background-color: #18283b9c;
     border-radius: 2%;
 }
+
 img.foroccur {
     width: 28px;
     position: relative;
     top: -35px;
     left: 11px;
 }
+
 img.fortime {
     width: 28px;
     position: relative;
     top: -35px;
     left: 11px;
 }
+
 h1 {
     color: #c4c5cd;
     font-size: 23px;
@@ -667,6 +671,7 @@ h1 {
     padding-top: 15px;
     font-weight: 100;
 }
+
 .incident {
     width: 50%;
     /* border: 1px solid #80808080; */
@@ -709,10 +714,6 @@ h1 {
     background: var(--industrial-primary);
     border-radius: 5px;
 }
-
-
-
-
 
 :root {
     --primary-color: #2c3e50;
@@ -871,8 +872,9 @@ span {
 .alarm-detail {
     margin-bottom: 15px;
     font-size: 13px;
-    border-bottom: 1px solid #ccc; /* Adds a light underline */
-    padding-bottom: 10px; 
+    border-bottom: 1px solid #ccc;
+    /* Adds a light underline */
+    padding-bottom: 10px;
 }
 
 .alarm-detail {
@@ -898,4 +900,26 @@ span {
     display: flex;
     flex-direction: row;
     gap: 15px;
+}
+
+.forflex-down {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+}
+
+.container1 {
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    /* max-width: 500px; */
+    border: 1px solid #80808080;
+    position: relative;
+    top: 30px;
+}
+
+.container1:last-child {
+    flex: 2;
+    height: 230px;
+    padding: 2px;
 }
