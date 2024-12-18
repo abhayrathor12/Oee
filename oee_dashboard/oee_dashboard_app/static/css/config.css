@@ -27,12 +27,10 @@ footer.divfooter {
     background: #18283b9c;
     border-radius: 10px;
     position: relative;
-    left: 9.6%;
+    left: 2.6%;
 }
 
 .card-form__inner {
-
-    box-shadow: 0 30px 60px 0 rgba(90, 116, 148, 0.4);
     border-radius: 10px;
     padding: 35px;
 }
@@ -46,6 +44,14 @@ body.dark .card-form__inner {
 
 .card-input {
     margin-bottom: 20px;
+}
+
+body {
+    /* margin: 0; */
+    /* padding: 0; */
+    /* min-height: 100vh; */
+    display: block !important;
+    /* flex-direction: column; */
 }
 
 body.dark .card-input__label {
@@ -187,7 +193,9 @@ body.dark .card-input__input {
     margin: 0px auto;
     border: 1px solid #80808080;
     position: relative;
-    top: 30px;
+    top: 12px;
+
+    left: -5.2%;
 }
 
 .table-header {
