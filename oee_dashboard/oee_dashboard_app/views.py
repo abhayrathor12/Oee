@@ -1026,13 +1026,21 @@ def downtimepage(request):
         alarm: duration / 60 for alarm, duration in alarm_durations.items()
     }
 
-    # Determine the alarm with the maximum duration
-    most_frequent_alarm = max(alarm_durations, key=alarm_durations.get, default=None)
-    max_duration = alarm_durations.get(most_frequent_alarm, 0)
-    alarm_count = alarm_counts.get(most_frequent_alarm, 0)
+    # Sort alarms by duration in descending order
+    sorted_alarms = sorted(alarm_durations.items(), key=lambda x: x[1], reverse=True)
+
+    # Get the top two alarms
+    top_alarms = sorted_alarms[:2]  # Contains up to two alarms with their durations
+
+    # Prepare data for context
+    top_alarm_details = [
+        {"alarm_name": alarm[0], "duration": alarm[1], "count": alarm_counts.get(alarm[0], 0)}
+        for alarm in top_alarms
+    ]
 
     # Debug print
-    print(most_frequent_alarm, max_duration, alarm_count, "this is s")
+    print(top_alarm_details, "this is the top alarms")
+
     context = {
         "grouped_data": grouped_data,
         "FormattedTotalShiftTime": FormattedTotalShiftTime,
@@ -1046,9 +1054,7 @@ def downtimepage(request):
         "runtime": runtime,
         "Available_Run_Time": Available_Run_Time,
         "FormattedTotalAvailableRunTime": FormattedTotalAvailableRunTime,
-        "most_frequent_alarm": most_frequent_alarm,
-        "max_duration": max_duration,
-        "alarm_count": alarm_count,
+        "top_alarm_details": top_alarm_details,  # List containing details of top alarms
     }
 
     return render(request, "downtime.html", context)

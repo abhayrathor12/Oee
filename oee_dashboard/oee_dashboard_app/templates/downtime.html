@@ -5,6 +5,7 @@
 {% block extra_css %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'css/downtime.css' %}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -93,13 +94,52 @@
               </div>
             </div>
             <div class="firstbox12">
-              <h3>Priority Alarm</h3>  
-              <div class="box10">
-                <div class="run">&nbsp; Name of Alarm :<br>&nbsp; <p class="forval1" id="run">{{most_frequent_alarm}} </p></div>
-                <div class="run">&nbsp; Duration :<br>&nbsp; <p class="forval1" id="run"> {{max_duration}} </p></div>
-                <div class="run">&nbsp; Times Occured :<br>&nbsp; <p class="forval1" id="run">{{alarm_count}} </p></div>
-                
+              {% comment %} <h3>Priority Alarm</h3>   {% endcomment %}
+              <div class="forthis">
+              {% for i in  top_alarm_details %}
+              <div class="alarm-card">
+                <div class="alarm-header">
+                    <h2>{{i.alarm_name}}</h2>
+                    <i class="fas fa-exclamation-triangle icon"></i>
+                </div>
+                <div class="alarm-content">
+                    <div class="alarm-detail">
+                        <span class="detail-label">Name of Alarm</span>
+                        <span class="detail-value">{{i.alarm_name}}</span>
+                    </div>
+                    <div class="alarm-detail">
+                        <span class="detail-label">Duration</span>
+                        <span class="detail-value">{{i.duration}}   Min</span>
+                    </div>
+                    <div class="alarm-detail">
+                        <span class="detail-label">Times Occurred</span>
+                        <span class="detail-value">{{i.count}}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% comment %} <div class="alarm-card">
+              <div class="alarm-header">
+                  <h2>{{most_frequent_alarm}}</h2>
+                  <i class="fas fa-exclamation-triangle icon"></i>
               </div>
+              <div class="alarm-content">
+                  <div class="alarm-detail">
+                      <span class="detail-label">Name of Alarm</span>
+                      <span class="detail-value">{{most_frequent_alarm}}</span>
+                  </div>
+                  <div class="alarm-detail">
+                      <span class="detail-label">Duration</span>
+                      <span class="detail-value">{{max_duration}}</span>
+                  </div>
+                  <div class="alarm-detail">
+                      <span class="detail-label">Times Occurred</span>
+                      <span class="detail-value">{{alarm_count}}</span>
+                  </div>
+              </div>
+          </div> {% endcomment %}
+        </div>
+              
             </div>
           </div>
         </div>
