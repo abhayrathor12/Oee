@@ -1339,3 +1339,32 @@ def filter_alarms(request):
     }
 
     return JsonResponse({"status": "success", "data": response_data})
+
+
+
+def filter_production_data(request):
+    today = date.today()
+    production_records = OEEData.objects.filter(DateTime__date=today)
+    alarm_record = ErrorDb.objects.filter(Timing__date=today)
+
+    labels = []  # Timestamps for the X-axis
+    production_data = []  # Production counts
+    alarms = []  # Alarm data
+
+    for record in production_records:
+        labels.append(record.DateTime.strftime("%H:%M"))  # Format the time
+        production_data.append(record.Production)  # Production count
+
+    for alarm in alarm_record:
+        alarms.append({
+            "name": alarm.NameOfAlarm.lower(),
+            "time": alarm.Timing.strftime("%H:%M"),
+            "alarm": alarm.Alarm_value == 'True'
+        })
+
+    return JsonResponse({
+        "status": "success",
+        "labels": labels,
+        "production": production_data,
+        "alarms": alarms,
+    })

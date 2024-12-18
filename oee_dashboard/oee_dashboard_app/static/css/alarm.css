@@ -201,14 +201,14 @@ body.dark .card-input__input {
 }
 
 footer.divfooter {
-    left: 87px !important;
+    left: 147px !important;
     position: fixed;
     height: 24px;
     width: 85% !important;
     transition: var(--tran-05);
     color: var(--text-color);
     margin-left: 0px !important;
-    bottom: 0px;
+    bottom: -13px;
 }
 
 .card-form {
@@ -900,8 +900,9 @@ span {
     display: flex;
     flex-direction: row;
     gap: 15px;
+    position: relative;
+    top: -16px;
 }
-
 .forflex-down {
     display: flex;
     flex-direction: row;
@@ -915,11 +916,12 @@ span {
     /* max-width: 500px; */
     border: 1px solid #80808080;
     position: relative;
-    top: 30px;
+    top: 5px;
 }
 
 .container1:last-child {
     flex: 2;
-    height: 230px;
+    height: 200px;
     padding: 2px;
+    background: #18283b9c;
 }

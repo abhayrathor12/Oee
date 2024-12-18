@@ -56,8 +56,6 @@
                 </div>
                 
             </div>
-            
-
                 <div class="chartfor">
                     <div class="time">
                         <div class="forhed"><h1>Occurrences</h1><span><img class="foroccur" src="{% static "images/alert.png" %}"</span></div>
@@ -102,7 +100,8 @@
 <div class="forflex-down">    
   
   <div class="container1">
-    <h3 class="shift">Alarm Details</h3> 
+    <canvas id="line-chart" width="1200" height="200"></canvas>
+    
   </div>
 </div>
 <footer class="divfooter">
@@ -111,8 +110,139 @@
     </p>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
 <script src="{% static 'js/details.js' %}"></script>
 <script>
+    let productionChart = null;
+
+    function renderProductionChart(canvasId, labels, productionData, alarms) {
+        const ctx = document.getElementById(canvasId).getContext("2d");
+    
+        // Destroy the existing chart if it exists
+        if (productionChart) {
+            productionChart.destroy();
+        }
+    
+        // Calculate delta values
+        const deltaData = productionData.map((value, index, array) => {
+            return index === 0 ? 0 : value - array[index - 1];
+        });
+    
+        // Define alarm ranges
+        function getAlarmRanges(alarms) {
+            const activeAlarms = {};
+            const alarmRanges = [];
+    
+            for (const alarm of alarms) {
+                if (alarm.alarm) {
+                    activeAlarms[alarm.name] = alarm.time;
+                } else if (activeAlarms[alarm.name]) {
+                    alarmRanges.push({
+                        name: alarm.name,
+                        start: activeAlarms[alarm.name],
+                        end: alarm.time,
+                        color: alarm.name === "emergency" ? 'rgba(255, 99, 132, 1)' : 'rgba(255, 165, 0, 1)' // Color coding
+                    });
+                    delete activeAlarms[alarm.name];
+                }
+            }
+    
+            return alarmRanges;
+        }
+    
+        const alarmRanges = getAlarmRanges(alarms);
+    
+        // Generate segment colors
+        function generateSegmentColors(labels, alarmRanges) {
+            const colors = [];
+            for (let i = 0; i < labels.length - 1; i++) {
+                const currentTime = labels[i];
+                const nextTime = labels[i + 1];
+                let segmentColor = 'rgba(75, 192, 192, 1)'; // Default color
+    
+                for (const range of alarmRanges) {
+                    if (currentTime >= range.start && nextTime <= range.end) {
+                        segmentColor = range.color; // Override with alarm color
+                        break;
+                    }
+                }
+    
+                colors.push(segmentColor);
+            }
+            return colors;
+        }
+    
+        const segmentColors = generateSegmentColors(labels, alarmRanges);
+    
+        // Custom plugin for segment colors
+        const segmentColorPlugin = {
+            id: 'segmentColorPlugin',
+            beforeDraw: (chart) => {
+                const { ctx, data } = chart;
+                const meta = chart.getDatasetMeta(0).data;
+    
+                ctx.save();
+                for (let i = 0; i < meta.length - 1; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(meta[i].x, meta[i].y);
+                    ctx.lineTo(meta[i + 1].x, meta[i + 1].y);
+                    ctx.strokeStyle = segmentColors[i];
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+        };
+    
+        Chart.register(segmentColorPlugin);
+    
+        // Create chart
+        productionChart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Production Trend",
+                    data: deltaData,
+                    borderColor: 'transparent', // Hidden to use custom plugin
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: "top" },
+                    zoom: {
+                        pan: { enabled: true, mode: "x" },
+                        zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: "x" }
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: "Time" } },
+                    y: { beginAtZero: true, title: { display: true, text: "Change in Production" } }
+                }
+            }
+        });
+    }
+    
+    // Fetch data and render chart
+    fetch("/filter-production-data")
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                const labels = data.labels;
+                const productionData = data.production;
+                const alarms = data.alarms;
+    
+                renderProductionChart("line-chart", labels, productionData, alarms);
+            }
+        })
+        .catch(error => console.error("Error loading production chart data:", error));
+
+
+
     let incidentsChart = null;
     let timesChart = null;
     

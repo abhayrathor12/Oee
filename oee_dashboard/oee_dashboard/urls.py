@@ -38,4 +38,5 @@ urlpatterns = [
     path("add_paremeter", views.add_paremeter, name="add_paremeter"),
     path("Alarmpage", views.Alarmpage, name="Alarmpage"),
     path("filter-alarms", views.filter_alarms, name="filter_alarms"),
+    path("filter-production-data/", views.filter_production_data, name="filter_production_data"),
 ]
