@@ -184,6 +184,7 @@ body.dark .card-input__input {
     position: relative;
     top: 10px;
     left: -5.2%;
+    background: #18283b9c;
 }
 
 .table-header {
