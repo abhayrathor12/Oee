@@ -629,26 +629,26 @@ h5 {
   height: 57px;
 }
 
-p.foot {
-  text-align: center;
-  color: white;
-  font-size: 16px;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  /* Ensure the body fills the viewport */
   display: flex;
   flex-direction: column;
-  background-color: #fff7f70d;
-
 }
 
-footer.divfooter {
-  left: 90px;
-  height: 24px;
-  width: 99%;
-  transition: var(--tran-05);
-  color: var(--text-color);
-  margin-left: 10px;
-  bottom: 0px;
+.footer {
+  padding: 30px 0;
+  padding-left: 131px;
+  text-align: center;
+  padding-right: 34px;
 }
 
+.inner-foot {
+  background: #fff7f70d;
+}
 
 
 .logoname {
@@ -891,9 +891,8 @@ i.bi.bi-clock-fill {
 img.imgg {
   width: 15px;
   height: 15px;
-  margin-top: -20px;
-  margin-left: 64%;
-  margin-bottom: 4px;
+  position: relative;
+  top: 3px;
 }
 
 .box9 {
@@ -1096,11 +1095,33 @@ i.bx.bxs-component {
   margin-left: -33px;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  /* Ensure the body fills the viewport */
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  padding: 30px 0;
+  padding-left: 131px;
+  text-align: center;
+  padding-right: 34px;
+}
+
+.inner-foot {
+  background: #fff7f70d;
+}
 
 .home-section {
-  width: 91%;
+  /* width: 91%; */
   margin-left: 8%;
+  flex: 1;
+  padding: 20px;
 }
+
 
 i.bx.bxs-x-circle {
   margin-left: -86px;

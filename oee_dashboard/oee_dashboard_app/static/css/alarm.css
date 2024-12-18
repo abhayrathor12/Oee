@@ -1,3 +1,11 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
 h3.shift {
     font-weight: 500;
     font-size: 30px;
@@ -901,12 +909,42 @@ span {
     flex-direction: row;
     gap: 15px;
     position: relative;
-    top: -16px;
+    top: 15px;
 }
+
 .forflex-down {
     display: flex;
     flex-direction: row;
     gap: 15px;
+}
+
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    /* Ensure the body fills the viewport */
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    padding: 30px 0;
+    padding-left: 131px;
+    text-align: center;
+    padding-right: 34px;
+}
+
+.inner-foot {
+    background: #fff7f70d;
+}
+
+.home-section {
+    /* width: 91%; */
+    margin-left: 8%;
+    flex: 1;
+    padding: 20px;
 }
 
 .container1 {
@@ -916,7 +954,7 @@ span {
     /* max-width: 500px; */
     border: 1px solid #80808080;
     position: relative;
-    top: 5px;
+    top: 34px;
 }
 
 .container1:last-child {

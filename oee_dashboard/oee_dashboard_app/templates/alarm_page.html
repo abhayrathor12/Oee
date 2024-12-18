@@ -7,329 +7,395 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
 
 <style>
-    
+
 </style>
 {% endblock %}
-
 {% block extra_js %}
 <script>
-    function updateCardVisibility() {
-        // Get the number selected from the dropdown
-        const numCards = document.getElementById('card-select').value;
-        
-        // Get all the error cards
-        const cards = document.querySelectorAll('.error-card');
-        
-        // Loop through all cards and hide those that exceed the selected number
-        cards.forEach((card, index) => {
-            if (index < numCards) {
-                card.style.display = 'block'; // Show the card
-            } else {
-                card.style.display = 'none'; // Hide the card  
-            }
-        });
-    }
-    
-    // Call this function initially to set the correct visibility when the page loads
-    updateCardVisibility();
+function updateCardVisibility() {
+    // Get the number selected from the dropdown
+    const numCards = document.getElementById('card-select').value;
+
+    // Get all the error cards
+    const cards = document.querySelectorAll('.error-card');
+
+    // Loop through all cards and hide those that exceed the selected number
+    cards.forEach((card, index) => {
+        if (index < numCards) {
+            card.style.display = 'block'; // Show the card
+        } else {
+            card.style.display = 'none'; // Hide the card  
+        }
+    });
+}
+
+// Call this function initially to set the correct visibility when the page loads
+updateCardVisibility();
 </script>
 {% endblock %}
-
 {% block content %}
-<div class="home-section">
-    {% comment %} <h3 class="shift">Alarm Details</h3> {% endcomment %}
-    
-<div class="forflex">    
-    <div class="container">
-        <div class="dashboard">
-            <div class="dashboard-header">
-                <h2>Alarm Details</h2>
-                <div>
-                    <label for="time-period-dropdown">Select Time Period:</label>
-                    <select id="time-period-dropdown" class="filter-select">
-                        <option value="all">All</option>
-                        <option value="today">Today</option>
-                        <option value="previous_week">Previous Week</option>
-                        <option value="last_month">Last Month</option>
-                    </select>
-                   
+
+    <div class="home-section">
+        <h3 class="shift">Alarm Details</h3>
+
+        <div class="forflex">
+            <div class="container">
+                <div class="dashboard">
+                    <div class="dashboard-header">
+                        <h2>Alarm Details</h2>
+                        <div>
+                            <label for="time-period-dropdown">Select Time Period:</label>
+                            <select id="time-period-dropdown" class="filter-select">
+                                <option value="all">All</option>
+                                <option value="today">Today</option>
+                                <option value="previous_week">Previous Week</option>
+                                <option value="last_month">Last Month</option>
+                            </select>
+
+                        </div>
+
+                    </div>
+                    <div class="chartfor">
+                        <div class="time">
+                            <div class="forhed">
+                                <h1>Occurrences</h1><span><img class="foroccur" src="{% static "images/alert.png" %}"</span>
+                            </div>
+                            <canvas id="incidents-chart"></canvas>
+                        </div>
+                        <div class="incident">
+                            <div class="forhed">
+                                <h1>Time (Minutes)</h1><span><img class="fortime" src="{% static "images/clock.png" %}"</span>
+                            </div>
+                            <canvas id="times-chart"></canvas>
+                        </div>
+                    </div>
+
+
+
                 </div>
-                
             </div>
-                <div class="chartfor">
-                    <div class="time">
-                        <div class="forhed"><h1>Occurrences</h1><span><img class="foroccur" src="{% static "images/alert.png" %}"</span></div>
-                        <canvas id="incidents-chart" ></canvas>
-                    </div>
-                    <div class="incident">
-                        <div class="forhed"><h1>Time (Minutes)</h1><span><img class="fortime" src="{% static "images/clock.png" %}"</span></div>
-                        <canvas id="times-chart" ></canvas>
-                    </div>
+            <div class="container">
+                <div class="table-header">
+                    <h2 class="table-title">Live Alarm</h2>
                 </div>
 
-            
-    
+                <div class="col-3 live-alarm-section">
+                    <h3 class="mb-3" style="color: var(--industrial-primary);">
+
+                    </h3>
+
+
+                    <div class="alarm-paragraph">
+                        {% for alarm in live_alarms %}
+                        <div class="alarm-detail">
+                            {% if alarm.status == 'critical' %}<i
+                                class="fas fa-exclamation-circle alarm-icon critical"></i>
+                            {% else %}<i class="fas fa-exclamation-triangle alarm-icon moderate"></i>{% endif %}
+
+                            At <strong>{{alarm.time}}</strong>, a <span
+                                class=" {% if alarm.status == 'critical' %}critical{% elif alarm.status == 'moderate' %}moderate{% else %}alarm-info{% endif %}">{{alarm.status}}</span>
+                            alarm was triggered for the <strong>{{alarm.name}}</strong>.
+                        </div>
+                        {% endfor%}
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="forflex-down">
+
+            <div class="container1">
+                <canvas id="line-chart" width="1200" height="200"></canvas>
+
+            </div>
         </div>
     </div>
-<div class="container">
-    <div class="table-header">
-        <h2 class="table-title">Live Alarm</h2>
-    </div>
+    
 
-    <div class="col-3 live-alarm-section">
-        <h3 class="mb-3" style="color: var(--industrial-primary);">
+
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+        <script src="{% static 'js/details.js' %}"></script>
+        <script>
             
-        </h3>
+            let productionChart = null;
 
+            function renderProductionChart(canvasId, labels, productionData, alarms) {
+                const ctx = document.getElementById(canvasId).getContext("2d");
 
-        <div class="alarm-paragraph">
-            {% for alarm in live_alarms %}
-            <div class="alarm-detail">
-                {% if alarm.status == 'critical' %}<i class="fas fa-exclamation-circle alarm-icon critical"></i>
-                {% else %}<i class="fas fa-exclamation-triangle alarm-icon moderate"></i>{% endif %}
-                
-                At <strong>{{alarm.time}}</strong>, a <span class=" {% if alarm.status == 'critical' %}critical{% elif alarm.status == 'moderate' %}moderate{% else %}alarm-info{% endif %}">{{alarm.status}}</span> alarm was triggered for the <strong>{{alarm.name}}</strong>. 
-            </div>
-            {% endfor%}
-        </div>
-    
-          </div>
-    </div>
-
-</div>
-<div class="forflex-down">    
-  
-  <div class="container1">
-    <canvas id="line-chart" width="1200" height="200"></canvas>
-    
-  </div>
-</div>
-<footer class="divfooter">
-    <p class="foot">© 2023 Copyright: TechnoViz Automation 
-        <img class="imgg" src="{% static 'images/logo-.png' %}">
-    </p>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
-<script src="{% static 'js/details.js' %}"></script>
-<script>
-    let productionChart = null;
-
-    function renderProductionChart(canvasId, labels, productionData, alarms) {
-        const ctx = document.getElementById(canvasId).getContext("2d");
-    
-        // Destroy the existing chart if it exists
-        if (productionChart) {
-            productionChart.destroy();
-        }
-    
-        // Calculate delta values
-        const deltaData = productionData.map((value, index, array) => {
-            return index === 0 ? 0 : value - array[index - 1];
-        });
-    
-        // Define alarm ranges
-        function getAlarmRanges(alarms) {
-            const activeAlarms = {};
-            const alarmRanges = [];
-    
-            for (const alarm of alarms) {
-                if (alarm.alarm) {
-                    activeAlarms[alarm.name] = alarm.time;
-                } else if (activeAlarms[alarm.name]) {
-                    alarmRanges.push({
-                        name: alarm.name,
-                        start: activeAlarms[alarm.name],
-                        end: alarm.time,
-                        color: alarm.name === "emergency" ? 'rgba(255, 99, 132, 1)' : 'rgba(255, 165, 0, 1)' // Color coding
-                    });
-                    delete activeAlarms[alarm.name];
+                // Destroy the existing chart if it exists
+                if (productionChart) {
+                    productionChart.destroy();
                 }
-            }
-    
-            return alarmRanges;
-        }
-    
-        const alarmRanges = getAlarmRanges(alarms);
-    
-        // Generate segment colors
-        function generateSegmentColors(labels, alarmRanges) {
-            const colors = [];
-            for (let i = 0; i < labels.length - 1; i++) {
-                const currentTime = labels[i];
-                const nextTime = labels[i + 1];
-                let segmentColor = 'rgba(75, 192, 192, 1)'; // Default color
-    
-                for (const range of alarmRanges) {
-                    if (currentTime >= range.start && nextTime <= range.end) {
-                        segmentColor = range.color; // Override with alarm color
-                        break;
-                    }
-                }
-    
-                colors.push(segmentColor);
-            }
-            return colors;
-        }
-    
-        const segmentColors = generateSegmentColors(labels, alarmRanges);
-    
-        // Custom plugin for segment colors
-        const segmentColorPlugin = {
-            id: 'segmentColorPlugin',
-            beforeDraw: (chart) => {
-                const { ctx, data } = chart;
-                const meta = chart.getDatasetMeta(0).data;
-    
-                ctx.save();
-                for (let i = 0; i < meta.length - 1; i++) {
-                    ctx.beginPath();
-                    ctx.moveTo(meta[i].x, meta[i].y);
-                    ctx.lineTo(meta[i + 1].x, meta[i + 1].y);
-                    ctx.strokeStyle = segmentColors[i];
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                }
-                ctx.restore();
-            }
-        };
-    
-        Chart.register(segmentColorPlugin);
-    
-        // Create chart
-        productionChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Production Trend",
-                    data: deltaData,
-                    borderColor: 'transparent', // Hidden to use custom plugin
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderWidth: 2,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: "top" },
-                    zoom: {
-                        pan: { enabled: true, mode: "x" },
-                        zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: "x" }
-                    }
-                },
-                scales: {
-                    x: { title: { display: true, text: "Time" } },
-                    y: { beginAtZero: true, title: { display: true, text: "Change in Production" } }
-                }
-            }
-        });
-    }
-    
-    // Fetch data and render chart
-    fetch("/filter-production-data")
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                const labels = data.labels;
-                const productionData = data.production;
-                const alarms = data.alarms;
-    
-                renderProductionChart("line-chart", labels, productionData, alarms);
-            }
-        })
-        .catch(error => console.error("Error loading production chart data:", error));
 
+                // Calculate delta values: current value - previous value
+                const deltaData = productionData.map((value, index, array) => {
+                    if (index === 0) return 0; // First value has no previous value
+                    return value - array[index - 1]; // Difference from previous value
+                });
 
+                // Generate segment colors based on alarms
+                function getAlarmRanges(alarms) {
+                    const activeAlarms = {};
+                    const alarmRanges = [];
 
-    let incidentsChart = null;
-    let timesChart = null;
-    
-    function renderChart(canvasId, data, label, bgColor, borderColor, axisLabelColor) {
-        const ctx = document.getElementById(canvasId).getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
-        gradient.addColorStop(0, bgColor); // Start color (top)
-        gradient.addColorStop(1, 'rgba(0,0,0,0)'); // Transparent at the bottom
-    
-        if (canvasId === "incidents-chart" && incidentsChart) {
-            incidentsChart.destroy();
-        } else if (canvasId === "times-chart" && timesChart) {
-            timesChart.destroy();
-        }
-    
-        const chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: data.map(item => item.name),
-                datasets: [{
-                    label: label, // This label will be hidden
-                    data: data.map(item => canvasId === "incidents-chart" ? item.occurrences : item.total_time),
-                    backgroundColor: gradient, // Apply the gradient here
-                    borderColor: borderColor,
-                    borderWidth: 1,
-                    barThickness: 36, // Fixed bar width in pixels
-                    maxBarThickness: 36 // Maximum bar width
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false // Hide the legend
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: '#9d9faf', // Set X-axis label color
-                            autoSkip: false // Prevent skipping of labels if there are many
-                        },
-                        grid: {
-                            display: false // Remove grid lines for X-axis
+                    for (const alarm of alarms) {
+                        if (alarm.alarm) {
+                            activeAlarms[alarm.name] = alarm.time;
+                        } else if (activeAlarms[alarm.name]) {
+                            alarmRanges.push({
+                                name: alarm.name,
+                                start: activeAlarms[alarm.name],
+                                end: alarm.time,
+                                color: alarm.name === "emergency" ? 'rgba(255, 99, 132, 1)' : 'rgba(255, 165, 0, 1)', // Red for emergency, Orange for overload
+                            });
+                            delete activeAlarms[alarm.name];
                         }
+                    }
+                    return alarmRanges;
+                }
+
+                const alarmRanges = getAlarmRanges(alarms);
+
+                // Function to generate segment colors based on alarm ranges
+                function generateSegmentColors(labels, alarmRanges) {
+                    const colors = [];
+                    const alarmNames = [];
+                    for (let i = 0; i < labels.length - 1; i++) {
+                        let segmentColor = 'rgba(75, 192, 192, 1)'; // Default color (blue)
+                        let alarmName = null;
+
+                        // Check if current segment overlaps with an alarm range
+                        for (const range of alarmRanges) {
+                            if (labels[i] >= range.start && labels[i + 1] <= range.end) {
+                                segmentColor = range.color; // Override with alarm color
+                                alarmName = range.name; // Save alarm name
+                                break;
+                            }
+                        }
+
+                        colors.push(segmentColor);
+                        alarmNames.push(alarmName);
+                    }
+                    return { colors, alarmNames };
+                }
+
+                const { colors: segmentColors, alarmNames } = generateSegmentColors(labels, alarmRanges);
+
+                // Custom plugin to apply the segment colors
+                const segmentColorPlugin = {
+                    id: 'segmentColorPlugin',
+                    beforeDraw: (chart) => {
+                        // Apply this plugin only to the line-chart
+                        if (chart.canvas.id !== 'line-chart') return;
+
+                        const { ctx, data } = chart;
+                        const meta = chart.getDatasetMeta(0).data;
+
+                        ctx.save();
+                        for (let i = 0; i < meta.length - 1; i++) {
+                            ctx.beginPath();
+                            ctx.moveTo(meta[i].x, meta[i].y);
+                            ctx.lineTo(meta[i + 1].x, meta[i + 1].y);
+                            ctx.strokeStyle = segmentColors[i];
+                            ctx.lineWidth = 2;
+                            ctx.stroke();
+                        }
+                        ctx.restore();
                     },
-                    y: {
-                        ticks: {
-                            color: '#9d9faf', // Set Y-axis label color
-                            stepSize: 5, // Set the interval between tick marks
-                            callback: function (value) {
-                                return value; // Optional: Customize tick labels if needed
+                };
+
+                // Register the plugin globally
+                Chart.register(segmentColorPlugin);
+
+                // Render the chart
+                productionChart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "Production Change",
+                                data: deltaData,
+                                borderColor: 'transparent',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderWidth: 2,
+                                fill: false,
+                                pointRadius: 4,
+                                tension: 0.4,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: "top",
+                                display: false,
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        const index = tooltipItem.dataIndex;
+                                        const alarmName = alarmNames[index];
+                                        if (alarmName) {
+                                            return `Alarm: ${alarmName}`;
+                                        }
+                                        return `Value: ${tooltipItem.raw}`;
+                                    },
+                                },
+                            },
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: 'x',
+                                },
+                                zoom: {
+                                    wheel: {
+                                        enabled: true,
+                                    },
+                                    pinch: {
+                                        enabled: true,
+                                    },
+                                    mode: 'x',
+                                    onZoom: ({ chart }) => {
+                                        chart.update();
+                                    },
+                                },
+                            },
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: false,
+                                    text: "Time",
+                                    color: '#9d9faf',
+                                },
+                                ticks: {
+
+                                    color: '#9d9faf',
+                                },
+                            },
+                            y: {
+                                title: {
+                                    display: false,
+                                    text: "Change in Production",
+                                    color: '#9d9faf',
+                                },
+                                ticks: {
+
+                                    color: '#9d9faf',
+                                },
+                                beginAtZero: true,
+                            },
+                        },
+                    },
+                });
+            }
+            // Fetch data from the server and render the production line chart
+            fetch("/filter-production-data")
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        const labels = data.labels; // X-axis labels (timestamps)
+                        const productionData = data.production; // Production counts only
+                        const alarms = data.alarms; // Alarms data
+
+                        renderProductionChart("line-chart", labels, productionData, alarms);
+                    }
+                })
+                .catch((error) => console.error("Error loading production chart data:", error));
+
+            let incidentsChart = null;
+            let timesChart = null;
+
+            function renderChart(canvasId, data, label, bgColor, borderColor) {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+                gradient.addColorStop(0, bgColor); // Start color (top)
+                gradient.addColorStop(1, 'rgba(0,0,0,0)'); // Transparent at the bottom
+
+                if (canvasId === "incidents-chart" && incidentsChart) {
+                    incidentsChart.destroy();
+                } else if (canvasId === "times-chart" && timesChart) {
+                    timesChart.destroy();
+                }
+
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(item => item.name),
+                        datasets: [{
+                            label: label,
+                            data: data.map(item => canvasId === "incidents-chart" ? item.occurrences : item.total_time),
+                            backgroundColor: gradient,
+                            borderColor: borderColor,
+                            borderWidth: 1,
+                            barThickness: 36,
+                            maxBarThickness: 36
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false // Hide the legend
                             }
                         },
-                        grid: {
-                            display: false // Remove grid lines for Y-axis
+                        scales: {
+                            x: {
+                                ticks: {
+                                    color: '#9d9faf',
+                                    autoSkip: false // Prevent skipping of labels
+                                },
+                                grid: {
+                                    display: false // Remove grid lines for X-axis
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    color: '#9d9faf',
+                                    stepSize: 5
+                                },
+                                grid: {
+                                    display: false // Remove grid lines for Y-axis
+                                }
+                            }
                         }
                     }
-                }
-            }
-        });
-    
-        if (canvasId === "incidents-chart") incidentsChart = chart;
-        if (canvasId === "times-chart") timesChart = chart;
-    }
-        document.getElementById('time-period-dropdown').addEventListener('change', function () {
-            const timePeriod = this.value;
+                });
 
-            fetch(`/filter-alarms?time_period=${timePeriod}`)
+                if (canvasId === "incidents-chart") incidentsChart = chart;
+                if (canvasId === "times-chart") timesChart = chart;
+            }
+
+            document.getElementById('time-period-dropdown').addEventListener('change', function () {
+                const timePeriod = this.value;
+
+                fetch(`/filter-alarms?time_period=${timePeriod}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            renderChart('incidents-chart', data.data.incidents, 'Occurrences', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)');
+                            renderChart('times-chart', data.data.times, 'Total Time (Minutes)', 'rgba(153, 102, 255, 0.2)', 'rgba(153, 102, 255, 1)');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching alarms:', error));
+            });
+
+            // Load initial data
+            fetch('/filter-alarms?time_period=all')
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
                         renderChart('incidents-chart', data.data.incidents, 'Occurrences', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)');
                         renderChart('times-chart', data.data.times, 'Total Time (Minutes)', 'rgba(153, 102, 255, 0.2)', 'rgba(153, 102, 255, 1)');
                     }
-                })
-                .catch(error => console.error('Error fetching alarms:', error));
-        });
+                });
 
-        // Load initial data
-        fetch('/filter-alarms?time_period=all')
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    renderChart('incidents-chart', data.data.incidents, 'Occurrences', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)');
-                    renderChart('times-chart', data.data.times, 'Total Time (Minutes)', 'rgba(153, 102, 255, 0.2)', 'rgba(153, 102, 255, 1)');
-                }
-            });
-    </script>
-{% endblock %}
+
+        </script>
+      
+    {% endblock %}
