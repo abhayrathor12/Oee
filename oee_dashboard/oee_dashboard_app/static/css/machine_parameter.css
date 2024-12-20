@@ -172,7 +172,9 @@ body.dark .card-input__input {
 .three {
     margin-top: 2%;
 }
-
+.footer {
+    padding-top: 215px !important;
+}
 
 .container {
     border-radius: 12px;

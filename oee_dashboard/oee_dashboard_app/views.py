@@ -35,18 +35,14 @@ current_date = datetime.now().date()
 
 def ModumDataFunc():
     global last_break_count, Production_data, Scrap_data, Run_time, Running_value, flag_error, flag_hold
+
     # Fetch all error definitions from the database
-
-    error_labels = (
-        Errorlabels.objects.all()
-    )  # Assuming the model is named `Errorlabels`
-
+    error_labels = Errorlabels.objects.all()
     parameter_data = parameterlabel.objects.get()
+
     while True:
         Running_value = c.read_coils(int(parameter_data.runnig_bit))[0]
-        Production_data = c.read_holding_registers(int(parameter_data.production_bit))[
-            0
-        ]
+        Production_data = c.read_holding_registers(int(parameter_data.production_bit))[0]
         Scrap_data = c.read_holding_registers(int(parameter_data.scrap_bit))[0]
         Run_time = c.read_coils(int(parameter_data.runnig_bit))[0]
 
@@ -58,6 +54,10 @@ def ModumDataFunc():
             error_name = label.ErrorName
             error_bit = label.ErrorBit
             error_status = c.read_discrete_inputs(int(error_bit))[0]
+
+            # Adjust logic for "light_curtain" errors (reverse behavior)
+            if error_name == "light_curtain":
+                error_status = not error_status  # Reverse the status
 
             # If any error is true, set the `any_error` flag
             if error_status:
@@ -73,12 +73,12 @@ def ModumDataFunc():
 
             # Log new error if detected
             if error_status and last_error_value != "True":
-                error = ErrorDb(NameOfAlarm=error_name, Alarm_value=error_status)
+                error = ErrorDb(NameOfAlarm=error_name, Alarm_value="True")
                 error.save()
 
             # Log resolved error if applicable
             if last_error_value == "True" and not error_status and Running_value:
-                error = ErrorDb(NameOfAlarm=error_name, Alarm_value=error_status)
+                error = ErrorDb(NameOfAlarm=error_name, Alarm_value="False")
                 error.save()
 
         # Evaluate flags based on Running_value and errors

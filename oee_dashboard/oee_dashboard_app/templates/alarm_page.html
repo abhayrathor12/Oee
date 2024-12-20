@@ -105,9 +105,15 @@ updateCardVisibility();
         </div>
         <div class="forflex-down">
 
-            <div class="container1">
+            {% comment %} <div class="container1">
                 <canvas id="line-chart" width="1200" height="200"></canvas>
 
+            </div> {% endcomment %}
+            <div class="prod">
+                <div class="forhed">
+                    <h1>Real-Time Alarm Tracking and Production Changes</h1><span><img class="foroccur" src="{% static "images/growth.png" %}"</span>
+                </div>
+                <canvas id="line-chart" width="1200" height="200"></canvas>
             </div>
         </div>
     </div>
@@ -295,18 +301,26 @@ updateCardVisibility();
                 });
             }
             // Fetch data from the server and render the production line chart
-            fetch("/filter-production-data")
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status === "success") {
-                        const labels = data.labels; // X-axis labels (timestamps)
-                        const productionData = data.production; // Production counts only
-                        const alarms = data.alarms; // Alarms data
-
-                        renderProductionChart("line-chart", labels, productionData, alarms);
-                    }
-                })
-                .catch((error) => console.error("Error loading production chart data:", error));
+            function fetchAndRenderChart() {
+                fetch("/filter-production-data")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.status === "success") {
+                            const labels = data.labels; // X-axis labels (timestamps)
+                            const productionData = data.production; // Production counts only
+                            const alarms = data.alarms; // Alarms data
+            
+                            renderProductionChart("line-chart", labels, productionData, alarms);
+                        }
+                    })
+                    .catch((error) => console.error("Error loading production chart data:", error));
+            }
+            
+            // Fetch and render the chart immediately
+            fetchAndRenderChart();
+            
+            // Set up an interval to fetch data every minute (60000 milliseconds)
+            setInterval(fetchAndRenderChart, 60000);
 
             let incidentsChart = null;
             let timesChart = null;

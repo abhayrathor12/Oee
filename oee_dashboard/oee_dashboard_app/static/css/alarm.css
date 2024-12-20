@@ -963,3 +963,18 @@ body {
     padding: 2px;
     background: #18283b9c;
 }
+
+
+.prod {
+    width: 99%;
+    /* border: 1px solid #80808080; */
+    background-color: #18283b9c;
+    border-radius: 2%;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    position: relative;
+    top: 34px;
+    
+    border: 1px solid #80808080;
+}
