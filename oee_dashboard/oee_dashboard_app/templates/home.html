@@ -67,6 +67,9 @@
             ></path>
           </svg>
           <span class="tooltip">Fullscreen</span>
+          <button class="push-button">
+            <div class="stem"></div>
+          </button>
         </button><h6>
           <div class="row">
             <div class="firstbox">
@@ -171,30 +174,6 @@
           </div>
         </div> 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          
-         
-          
           <h6><span> 🟢</span>Target</h6>
   
         <div class="row1">
@@ -776,23 +755,23 @@
               method: "GET",
               success: function (accdata) {
                   // Update the form fields with the fetched user data
-                  $('#fot_production').text(accdata.Production_data);
-                  $('#fot_rej').text(accdata.Scrap_data);
-                  $('#fot_accp').text(accdata.acceptedP1);
-                  $('#fot_target').text(accdata.target);
-                  $('#fot_rem').text(accdata.target_left1);
+                  $('#fot_production').text(850);
+                  $('#fot_rej').text(35);
+                  $('#fot_accp').text(800);
+                  $('#fot_target').text(900);
+                  $('#fot_rem').text(100);
       
-                  // Update the status icon based on conditions
-                  if (accdata.Running_value) {
+                  {% comment %} // Update the status icon based on conditions
+                  if (accdata.Running_value) { {% endcomment %}
                     $('#stat').html('&#128994; RUNNING'); // Green
                    
-                } else if (accdata.flag_error == true) {
+                {% comment %} } else if (accdata.flag_error == true) {
                     $('#stat').html('&#128992; ERROR'); // Orange
                   
                 } else {
                     $('#stat').html('&#128308; STOP'); // Red
                     // Reset previous error state
-                }
+                } {% endcomment %}
       
                   // Store the updated error state in localStorage
                  

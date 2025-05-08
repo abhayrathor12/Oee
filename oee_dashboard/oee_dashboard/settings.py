@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-=fpf)$9ix!8&yd2huubcdo)(pxgs=%g-@d%v89vl3bh0(85sp4
 DEBUG = True
 #
 ALLOWED_HOSTS = ["*"]
-# ALLOWED_HOSTS = ['192.168.1.50','122.160.98.176']
+# ALLOWED_HOSTS = ['192.168.1.60','122.180.247.129']
 
 
 # Application definition
@@ -77,13 +77,9 @@ WSGI_APPLICATION = "oee_dashboard.wsgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "oee_db",
-        "USER": "root",
-        "PASSWORD": "technoviz",
-        "HOST": "localhost",
-        "PORT": "3306",
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

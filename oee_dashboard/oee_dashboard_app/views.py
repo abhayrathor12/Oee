@@ -305,53 +305,99 @@ def home_page(request):
 
     today = datetime.now().date()
 
-    # Get the last five rows from the database
-    last_five_rows = OEEData.objects.order_by("-id")[:5]
-    datefromdb = last_five_rows[4].DateTime.date()
-    try:
-        last_row = OEEData.objects.latest("id")
-        row_date = last_row.DateTime.date()
+    # # Get the last five rows from the database
+    # last_five_rows = OEEData.objects.order_by("-id")[:5]
+    # datefromdb = last_five_rows[4].DateTime.date()
+    # try:
+    #     last_row = OEEData.objects.latest("id")
+    #     row_date = last_row.DateTime.date()
 
-        runtimeis = last_row.Runtime_is if row_date == current_date else 0
-    except OEEData.DoesNotExist:
-        # Handle the case when there are no records in the database
-        runtimeis = 0
+    #     runtimeis = last_row.Runtime_is if row_date == current_date else 0
+    # except OEEData.DoesNotExist:
+    #     # Handle the case when there are no records in the database
+    #     runtimeis = 0
 
-    last_five_rows1 = OEEData.objects.filter(DateTime__date=current_date).order_by(
-        "-id"
-    )[:15]
+    # last_five_rows1 = OEEData.objects.filter(DateTime__date=current_date).order_by(
+    #     "-id"
+    # )[:15]
 
-    # Initialize lists for free times and production-scrap values
-    free_times = []
-    production_scrap_values = []
+    # # Initialize lists for free times and production-scrap values
+    # free_times = []
+    # production_scrap_values = []
 
-    # Extract time and production - scrap value from the last five rows
-    for row in reversed(last_five_rows1):
-        free_times.append(row.DateTime.strftime("%H:%M"))
-        production_scrap_values.append(int(row.Production) - int(row.Defective))
+    # # Extract time and production - scrap value from the last five rows
+    # for row in reversed(last_five_rows1):
+    #     free_times.append(row.DateTime.strftime("%H:%M"))
+    #     production_scrap_values.append(int(row.Production) - int(row.Defective))
 
-    # If there are less than 5 rows for today's date, fill remaining slots with zeros
-    num_zeros_to_append = 15 - len(last_five_rows1)
-    free_times += ["00:00"] * num_zeros_to_append
-    production_scrap_values += [0] * num_zeros_to_append
+    # # If there are less than 5 rows for today's date, fill remaining slots with zeros
+    # num_zeros_to_append = 15 - len(last_five_rows1)
+    # free_times += ["00:00"] * num_zeros_to_append
+    # production_scrap_values += [0] * num_zeros_to_append
 
-    data_for_last_five_days = []
-    for day in range(4, -1, -1):
-        date_for_day = today - timedelta(days=day)
-        data_for_day = (
-            OEEData.objects.filter(DateTime__date=date_for_day).order_by("-id").first()
-        )
-        data_for_last_five_days.append(data_for_day)
-    production_graph = [
-        data.Production if data else 0 for data in data_for_last_five_days
-    ]
-    if data_for_last_five_days[4]:
+    # data_for_last_five_days = []
+    # for day in range(4, -1, -1):
+    #     date_for_day = today - timedelta(days=day)
+    #     data_for_day = (
+    #         OEEData.objects.filter(DateTime__date=date_for_day).order_by("-id").first()
+    #     )
+    #     data_for_last_five_days.append(data_for_day)
+    # production_graph = [
+    #     data.Production if data else 0 for data in data_for_last_five_days
+    # ]
+    # if data_for_last_five_days[4]:
 
-        production_graph[4] = Production_data
+    #     production_graph[4] = Production_data
 
-    scrap_graph = [data.Defective if data else 0 for data in data_for_last_five_days]
-    if data_for_last_five_days[4]:
-        scrap_graph[4] = Scrap_data
+    # scrap_graph = [data.Defective if data else 0 for data in data_for_last_five_days]
+    # if data_for_last_five_days[4]:
+    #     scrap_graph[4] = Scrap_data
+    
+    # Dummy data for all variables in the context dictionary
+    Final_Quality = 95.5  # Percentage representing quality metric
+    Final_performance = 92.3  # Percentage representing performance metric
+    Final_Availabilty = 88.7  # Percentage representing availability metric (typo in variable name)
+    Final_OEE = 78.9  # Percentage representing overall OEE metric
+    capacity_is = 1000  # Total production capacity (units)
+    runtimeis = 360  # Runtime in minutes for the current day
+    production_is = 850  # Total production units for the current day
+    scrap_is = 30  # Total defective units for the current day
+    target = 900  # Target production units
+    target_left = target - production_is  # Remaining units to meet target (900 - 850 = 50)
+    acceptedP = 820  # Accepted production units (production - scrap)
+    acceptedP1 = 815  # Another accepted production metric (slightly different for testing)
+    remaining_time = "02:30:00"  # Remaining time in HH:MM:SS format
+    formatted_remaining_time = "2h 30m"  # Human-readable remaining time
+    formatted_final_unplaned = "1h 15m"  # Formatted unplanned downtime
+
+    # Dummy data for production and scrap graphs (last 5 days)
+    production_graph = [700, 750, 800, 825, 850]  # Production units for last 5 days
+    scrap_graph = [20, 25, 30, 28, 30]  # Scrap units for last 5 days
+
+    # Dummy data for last production, datetime, and defective values
+    last_production_values = [820, 830, 840, 845, 850]  # Last 5 production values
+    last_datetime_values = ["10:00", "11:00", "12:00", "13:00", "14:00"]  # Last 5 times
+    last_defective_values = [25, 27, 29, 30, 30]  # Last 5 defective values
+
+    # Dummy data for production-scrap values and free times (last 15 records for today)
+    production_scrap_values = [400, 510, 591, 670, 810, 815, 820, 825, 830, 835, 840, 845, 850, 850, 850]  # Production - Scrap
+    free_times = [
+        "08:00", "08:30", "09:00", "09:30", "10:00",
+        "10:30", "11:00", "11:30", "12:00", "12:30",
+        "13:00", "13:30", "14:00", "14:30", "15:00"
+    ]  # Corresponding times
+
+    # Dummy data for final metrics (possibly for another machine or shift)
+    final_availability_1 = 90.2  # Percentage for another availability metric
+    final_oee_1 = 80.1  # Percentage for another OEE metric
+    final_performance_1 = 93.4  # Percentage for another performance metric
+    final_production_1 = 860  # Production units for another metric
+    final_quality_1 = 96.0  # Percentage for another quality metric
+    runtime = 400  # Runtime in minutes for another metric
+
+    # Dummy data for Production_data and Scrap_data (used to override graph values)
+    Production_data = 860  # Production for the most recent day
+    Scrap_data = 35  # Scrap for the most recent day
 
     context = {
         "Final_Quality": Final_Quality if Final_Quality is not None else 0,
@@ -1066,50 +1112,95 @@ import json
 
 def downtime_data(request):
     global grouped_data
+    # Current date for consistency
     today = date.today()
-    data_for_today = ErrorDb.objects.filter(Timing__date=today)
 
-    grouped_data = []
+    # Dummy data for ErrorDb queryset (data_for_today)
+    # Simulating ErrorDb objects with Timing and NameOfAlarm
+    data_for_today = [
+        {
+            "NameOfAlarm": "Emergency",
+            "Timing": datetime.combine(today, datetime.strptime("08:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Emergency",
+            "Timing": datetime.combine(today, datetime.strptime("08:30:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Overload",
+            "Timing": datetime.combine(today, datetime.strptime("09:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Overload",
+            "Timing": datetime.combine(today, datetime.strptime("09:15:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Timing": datetime.combine(today, datetime.strptime("10:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Timing": datetime.combine(today, datetime.strptime("10:45:00", "%H:%M:%S").time())
+        },
+    ]
 
-    for item in data_for_today:
-        name_of_alarm = item.NameOfAlarm
-        timing = item.Timing
+    # Dummy grouped_data after processing data_for_today
+    grouped_data = [
+        {
+            "alarm": "Emergency",
+            "start_time": datetime.combine(today, datetime.strptime("08:00:00", "%H:%M:%S").time()),
+            "stop_time": datetime.combine(today, datetime.strptime("08:30:00", "%H:%M:%S").time()),
+            "time_difference": timedelta(minutes=30)
+        },
+        {
+            "alarm": "Overload",
+            "start_time": datetime.combine(today, datetime.strptime("09:00:00", "%H:%M:%S").time()),
+            "stop_time": datetime.combine(today, datetime.strptime("09:15:00", "%H:%M:%S").time()),
+            "time_difference": timedelta(minutes=15)
+        },
+        {
+            "alarm": "Light Curtain",
+            "start_time": datetime.combine(today, datetime.strptime("10:00:00", "%H:%M:%S").time()),
+            "stop_time": datetime.combine(today, datetime.strptime("10:45:00", "%H:%M:%S").time()),
+            "time_difference": timedelta(minutes=45)
+        },
+    ]
 
-        existing_entry = next(
-            (
-                entry
-                for entry in grouped_data
-                if entry["alarm"] == name_of_alarm and entry["stop_time"] is None
-            ),
-            None,
-        )
-
-        if existing_entry:
-            existing_entry["stop_time"] = timing
-        else:
-            grouped_data.append(
-                {"alarm": name_of_alarm, "start_time": timing, "stop_time": None}
-            )
-
-    for entry in grouped_data:
-        if entry["stop_time"] is not None:
-            start_time = entry["start_time"]
-            stop_time = entry["stop_time"]
-            time_difference = stop_time - start_time
-            entry["time_difference"] = time_difference
-
-    # Process Error_statistics into chart data
-    error_statistics_new = {
-        "labels": [],
-        "durationData": [],
-        "incidentsData": [],
+    # Dummy Error_statistics (input to error_statistics_new)
+    Error_statistics = {
+        "Emergency": {
+            "time_differences": [1800, 1800],  # 30 minutes each in seconds (30*60)
+            "occurrences": 2
+        },
+        "Overload": {
+            "time_differences": [900, 900],  # 15 minutes each in seconds (15*60)
+            "occurrences": 2
+        },
+        "Light Curtain": {
+            "time_differences": [2700],  # 45 minutes in seconds (45*60)
+            "occurrences": 1
+        }
     }
 
-    for alarm, stats in Error_statistics.items():
-        error_statistics_new["labels"].append(alarm)
-        error_statistics_new["durationData"].append(sum(stats["time_differences"]))
-        error_statistics_new["incidentsData"].append(stats["occurrences"])
-    print(error_statistics_new)
+    # Dummy error_statistics_new (processed for chart data)
+    error_statistics_new = {
+        "labels": ["Emergency", "Overload", "Light Curtain"],
+        "durationData": [3600, 1800, 2700],  # Total duration in seconds (sum of time_differences)
+        "incidentsData": [2, 2, 1]  # Number of occurrences
+    }
+
+    # Dummy data for context variables
+    FormattedTotalShiftTime = "8h 0m"  # Total shift time (e.g., 8 hours)
+    FormattedTotalAvailableShifttime = "7h 30m"  # Available shift time after breaks
+    Formattedtotal_break_duration = "30m"  # Total break duration
+    formatted_final_unplaned = "1h 30m"  # Formatted unplanned downtime
+    Formattedtotal_break_durationMinutes = 30  # Break duration in minutes
+    Final_unplaned = 90  # Unplanned downtime in minutes
+    Unplanned_Time_Percentage = 18.75  # Unplanned downtime as percentage of shift (90/480 * 100)
+    TotalShiftTimeinMinutes = 480  # Total shift time in minutes (8 hours)
+    runtime = 360  # Runtime in minutes (6 hours)
+    Available_Run_Time = 390  # Available runtime in minutes (after breaks)
+    FormattedTotalAvailableRunTime = "6h 30m"  # Formatted available runtime
 
     context = {
         "grouped_data": json.dumps(grouped_data, cls=DjangoJSONEncoder),
@@ -1153,13 +1244,13 @@ def foractualval(request):
             last_five_acceptedP1 = last_five_acceptedP1[-5:]
 
         accdata = {
-            "Production_data": Production_data,
-            "Scrap_data": Scrap_data,
-            "target_left1": target_left1,
-            "acceptedP1": acceptedP1,
-            "Running_value": Running_value,
+            "Production_data": 850,
+            "Scrap_data": 35,
+            "target_left1": 50,
+            "acceptedP1": 800,
+            "Running_value": 1,
             # Include the list in the response
-            "target": target,
+            "target": 900,
             "flag_error": flag_error,
         }
 
@@ -1289,58 +1380,168 @@ from django.db.models import F
 
 def filter_alarms(request):
     time_period = request.GET.get("time_period", "all")
-    today = datetime.today()
-    start_date = None
+    # Dummy ErrorDb queryset (simulating database records)
+    error_db_data = [
+        # Today
+        {
+            "NameOfAlarm": "Emergency",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today, datetime.strptime("08:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Emergency",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today, datetime.strptime("08:30:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Overload",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today, datetime.strptime("09:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Overload",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today, datetime.strptime("09:15:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today, datetime.strptime("10:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today, datetime.strptime("10:45:00", "%H:%M:%S").time())
+        },
+        # Previous week (7 days ago)
+        {
+            "NameOfAlarm": "Emergency",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today - timedelta(days=7), datetime.strptime("09:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Emergency",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today - timedelta(days=7), datetime.strptime("09:20:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today - timedelta(days=7), datetime.strptime("11:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today - timedelta(days=7), datetime.strptime("11:30:00", "%H:%M:%S").time())
+        },
+        # Last month (30 days ago)
+        {
+            "NameOfAlarm": "Overload",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today - timedelta(days=30), datetime.strptime("10:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Overload",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today - timedelta(days=30), datetime.strptime("10:10:00", "%H:%M:%S").time())
+        },
+    ]
 
-    # Determine the time range based on the selected time period
-    if time_period == "today":
-        start_date = today.date()
-    elif time_period == "previous_week":
-        start_date = (today - timedelta(days=7)).date()
-    elif time_period == "last_month":
-        start_date = (today - timedelta(days=30)).date()
+    # Mock ErrorDb queryset for testing
+    class MockErrorDb:
+        def __init__(self, data):
+            self.data = data
+        def filter(self, **kwargs):
+            if "Timing__date__gte" in kwargs:
+                start_date = kwargs["Timing__date__gte"]
+                return [d for d in self.data if d["Timing"].date() >= start_date]
+            elif "Timing__date" in kwargs:
+                date = kwargs["Timing__date"]
+                return [d for d in self.data if d["Timing"].date() == date]
+            return self.data
+        def all(self):
+            return self.data
+        def order_by(self, *args):
+            # Simplified: Assume data is already sorted by NameOfAlarm, Timing
+            return self
+        def values(self, *fields):
+            return [
+                {field: d[field] for field in fields}
+                for d in self.data
+            ]
 
-    # Filter the data based on the time range
-    if start_date:
-        alarm_data = ErrorDb.objects.filter(Timing__date__gte=start_date)
-    else:
-        alarm_data = ErrorDb.objects.all()
+    ErrorDb = MockErrorDb(error_db_data)
 
-    # Fetch fresh data for every request
-    alarm_data = alarm_data.order_by('NameOfAlarm', 'Timing').values(
-        'NameOfAlarm', 'Alarm_value', 'Timing'
-    )
+    # Dummy alarm_data for "today" (filtered)
+    alarm_data_today = [
+        {
+            "NameOfAlarm": "Emergency",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today, datetime.strptime("08:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Emergency",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today, datetime.strptime("08:30:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today, datetime.strptime("10:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today, datetime.strptime("10:45:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Overload",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today, datetime.strptime("09:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Overload",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today, datetime.strptime("09:15:00", "%H:%M:%S").time())
+        },
+    ]
 
-    # Initialize a dictionary to store the results
-    error_stats = defaultdict(lambda: {"total_time": 0, "occurrences": 0})
+    # Dummy alarm_pairs (intermediate data structure for "today")
     alarm_pairs = defaultdict(list)
+    alarm_pairs.update({
+        "Emergency": [
+            ("True", datetime.combine(today, datetime.strptime("08:00:00", "%H:%M:%S").time())),
+            ("False", datetime.combine(today, datetime.strptime("08:30:00", "%H:%M:%S").time()))
+        ],
+        "Overload": [
+            ("True", datetime.combine(today, datetime.strptime("09:00:00", "%H:%M:%S").time())),
+            ("False", datetime.combine(today, datetime.strptime("09:15:00", "%H:%M:%S").time()))
+        ],
+        "Light Curtain": [
+            ("True", datetime.combine(today, datetime.strptime("10:00:00", "%H:%M:%S").time())),
+            ("False", datetime.combine(today, datetime.strptime("10:45:00", "%H:%M:%S").time()))
+        ],
+    })
 
-    # Group alarms by name and track active times
-    for alarm in alarm_data:
-        alarm_pairs[alarm['NameOfAlarm']].append((alarm['Alarm_value'], alarm['Timing']))
+    # Dummy error_stats (processed for "today")
+    error_stats = defaultdict(lambda: {"total_time": 0, "occurrences": 0})
+    error_stats.update({
+        "Emergency": {"total_time": 30.0, "occurrences": 1},  # 30 minutes
+        "Overload": {"total_time": 15.0, "occurrences": 1},   # 15 minutes
+        "Light Curtain": {"total_time": 45.0, "occurrences": 1},  # 45 minutes
+    })
 
-    # Calculate occurrences and total time
-    for alarm_name, events in alarm_pairs.items():
-        start_time = None
-        for value, timing in events:
-            if value == "True":
-                start_time = timing
-            elif value == "False" and start_time:
-                # Calculate the duration and reset start_time
-                duration = (timing - start_time).total_seconds() / 60
-                error_stats[alarm_name]["total_time"] += duration
-                error_stats[alarm_name]["occurrences"] += 1
-                start_time = None  # Reset for the next pair
-
-    # Prepare the response data
+    # Dummy response_data for "today"
     response_data = {
         "incidents": [
-            {"name": error, "occurrences": stats["occurrences"]}
-            for error, stats in error_stats.items()
+            {"name": "Emergency", "occurrences": 1},
+            {"name": "Overload", "occurrences": 1},
+            {"name": "Light Curtain", "occurrences": 1},
         ],
         "times": [
-            {"name": error, "total_time": stats["total_time"]}
-            for error, stats in error_stats.items()
+            {"name": "Emergency", "total_time": 30.0},
+            {"name": "Overload", "total_time": 15.0},
+            {"name": "Light Curtain", "total_time": 45.0},
         ],
     }
 
@@ -1350,23 +1551,105 @@ def filter_alarms(request):
 
 def filter_production_data(request):
     today = date.today()
-    production_records = OEEData.objects.filter(DateTime__date=today)
-    alarm_record = ErrorDb.objects.filter(Timing__date=today)
+   # Dummy OEEData queryset (simulating production records for today)
+    oee_data = [
+        {
+            "DateTime": datetime.combine(today, datetime.strptime("08:00:00", "%H:%M:%S").time()),
+            "Production": 100
+        },
+        {
+            "DateTime": datetime.combine(today, datetime.strptime("09:00:00", "%H:%M:%S").time()),
+            "Production": 200
+        },
+        {
+            "DateTime": datetime.combine(today, datetime.strptime("10:00:00", "%H:%M:%S").time()),
+            "Production": 300
+        },
+        {
+            "DateTime": datetime.combine(today, datetime.strptime("11:00:00", "%H:%M:%S").time()),
+            "Production": 400
+        },
+        {
+            "DateTime": datetime.combine(today, datetime.strptime("12:00:00", "%H:%M:%S").time()),
+            "Production": 500
+        },
+    ]
 
-    labels = []  # Timestamps for the X-axis
-    production_data = []  # Production counts
-    alarms = []  # Alarm data
+    # Dummy ErrorDb queryset (simulating alarm records for today)
+    error_db_data = [
+        {
+            "NameOfAlarm": "Emergency",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today, datetime.strptime("08:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Emergency",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today, datetime.strptime("08:30:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Overload",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today, datetime.strptime("09:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Overload",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today, datetime.strptime("09:15:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Alarm_value": "True",
+            "Timing": datetime.combine(today, datetime.strptime("10:00:00", "%H:%M:%S").time())
+        },
+        {
+            "NameOfAlarm": "Light Curtain",
+            "Alarm_value": "False",
+            "Timing": datetime.combine(today, datetime.strptime("10:45:00", "%H:%M:%S").time())
+        },
+    ]
 
-    for record in production_records:
-        labels.append(record.DateTime.strftime("%H:%M"))  # Format the time
-        production_data.append(record.Production)  # Production count
+    # Mock OEEData queryset
+    class MockOEEData:
+        def __init__(self, data):
+            self.data = data
+        def filter(self, **kwargs):
+            date = kwargs.get("DateTime__date")
+            return [d for d in self.data if d["DateTime"].date() == date]
 
-    for alarm in alarm_record:
-        alarms.append({
-            "name": alarm.NameOfAlarm.lower(),
-            "time": alarm.Timing.strftime("%H:%M"),
-            "alarm": alarm.Alarm_value == 'True'
-        })
+    OEEData = MockOEEData(oee_data)
+
+    # Mock ErrorDb queryset
+    class MockErrorDb:
+        def __init__(self, data):
+            self.data = data
+        def filter(self, **kwargs):
+            date = kwargs.get("Timing__date")
+            return [d for d in self.data if d["Timing"].date() == date]
+
+    ErrorDb = MockErrorDb(error_db_data)
+
+    # Dummy production_records (filtered for today)
+    production_records = oee_data  # Same as oee_data since all are for today
+
+    # Dummy alarm_record (filtered for today)
+    alarm_record = error_db_data  # Same as error_db_data since all are for today
+
+    # Dummy labels (timestamps for X-axis)
+    labels = ["08:00", "09:00", "10:00", "11:00", "12:00"]
+
+    # Dummy production_data (production counts)
+    production_data = [100, 200, 300, 400, 500]
+
+    # Dummy alarms (formatted alarm events)
+    alarms = [
+        {"name": "emergency", "time": "08:00", "alarm": True},
+        {"name": "emergency", "time": "08:30", "alarm": False},
+        {"name": "overload", "time": "09:00", "alarm": True},
+        {"name": "overload", "time": "09:15", "alarm": False},
+        {"name": "light curtain", "time": "10:00", "alarm": True},
+        {"name": "light curtain", "time": "10:45", "alarm": False},
+    ]
 
     return JsonResponse({
         "status": "success",
