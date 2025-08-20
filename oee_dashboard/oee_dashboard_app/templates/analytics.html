@@ -16,13 +16,10 @@
         color: #333;
     }
     .main-container {
-        max-width: 1100px;
+        max-width: 1200px;
         margin: 0 auto;
     }
-    canvas#chart {
-    width: 1175px;
-    height: 200px;
-}
+    
     h2 {
         color: white;
         text-align: center;
@@ -34,10 +31,26 @@
     .dashboard-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
         gap: 12px;
-        margin-bottom: 12px;
         align-items: start;
     }
+    
+    .form-card {
+        grid-row: 1 / 3; /* Spans both rows */
+    }
+    
+    .results-card {
+        grid-column: 2;
+        grid-row: 1;
+    }
+    
+    .chart-container {
+        grid-column: 2;
+        grid-row: 2;
+        margin-top: 0;
+    }
+    
     .card {
         backdrop-filter: blur(6px);
         border-radius: 10px;
@@ -46,6 +59,7 @@
         border: 1px solid rgba(255,255,255,0.17);
         min-height: 0;
     }
+    
     .form-card h3, .results-card h3, .chart-container h3 {
         margin-top: 0;
         color: white;
@@ -87,6 +101,7 @@
         margin: 0;
     }
     .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
         width: 14px;
         height: 14px;
         border-radius: 50%;
@@ -178,27 +193,47 @@
         border-left: 3px solid #38a169;
         font-size: 13px;
     }
-    .chart-container {
-        backdrop-filter: blur(6px);
-        border-radius: 10px;
-        padding: 10px 18px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        border: 1px solid rgba(255,255,255,0.17);
-        margin-top: 0;
+    
+    .chart-container canvas {
+        width: 100% !important;
+        height: 300px !important;
+        min-height: 300px !important;
     }
+    
     .hide { display: none; }
-    #chart { min-height: 220px!important; }
-    @media (max-width: 1100px) {
+    
+    /* Responsive Design */
+    @media (max-width: 1200px) {
         .main-container { max-width: 98vw; }
     }
+    
     @media (max-width: 900px) {
-        .dashboard-grid { grid-template-columns: 1fr; }
-        .chart-container { margin-top: 10px; }
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto auto;
+        }
+        
+        .form-card {
+            grid-row: 1;
+            grid-column: 1;
+        }
+        
+        .results-card {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .chart-container {
+            grid-column: 1;
+            grid-row: 3;
+        }
     }
+    
     @media (max-width: 480px) {
-        body { padding: 2px; }
-        .card, .chart-container { padding: 6px 2px; }
-        h2 { font-size: 1.1rem; }
+        body { padding: 4px; }
+        .card, .chart-container { padding: 8px 12px; }
+        h2 { font-size: 1.2rem; }
+        .btn { font-size: 0.85rem; }
     }
 </style>
 {% endblock %}
@@ -208,7 +243,7 @@
     <div class="main-container">
         <h2><i class="fas fa-cogs"></i> Machine Fault Prediction</h2>
         <div class="dashboard-grid">
-            <!-- Input Form -->
+            <!-- Input Form - Left Side -->
             <div class="card form-card">
                 <h3><i class="fas fa-sliders-h"></i> Control Parameters</h3>
                 <form method="POST" id="predictionForm">
@@ -224,7 +259,6 @@
                             <input type="range" name="temperature" class="slider" min="0" max="120" value="50"
                                    oninput="temperature_val.innerText = this.value + '°C'">
                         </div>
-                        
                     </div>
                     
                     <!-- Humidity -->
@@ -237,7 +271,6 @@
                             <input type="range" name="humidity" class="slider" min="0" max="100" value="50"
                                    oninput="humidity_val.innerText = this.value + '%'">
                         </div>
-                       
                     </div>
                     
                     <!-- RPM -->
@@ -250,7 +283,6 @@
                             <input type="range" name="rpm" class="slider" min="500" max="3000" value="1500"
                                    oninput="rpm_val.innerText = this.value">
                         </div>
-                        
                     </div>
                     
                     <!-- Gas Pressure -->
@@ -263,7 +295,6 @@
                             <input type="range" name="gas_pressure" class="slider" min="0" max="10" step="0.1" value="5"
                                    oninput="gas_pressure_val.innerText = this.value + ' bar'">
                         </div>
-                        
                     </div>
                     
                     <!-- Frequency -->
@@ -276,7 +307,6 @@
                             <input type="range" name="frequency" class="slider" min="40" max="70" value="50"
                                    oninput="frequency_val.innerText = this.value + ' Hz'">
                         </div>
-                        
                     </div>
                     
                     <!-- Current -->
@@ -289,7 +319,6 @@
                             <input type="range" name="current" class="slider" min="0" max="100" value="20"
                                    oninput="current_val.innerText = this.value + ' A'">
                         </div>
-                        
                     </div>
                     
                     <!-- Voltage -->
@@ -302,7 +331,6 @@
                             <input type="range" name="voltage" class="slider" min="180" max="260" value="220"
                                    oninput="voltage_val.innerText = this.value + ' V'">
                         </div>
-                        
                     </div>
                     
                     <div class="button-group">
@@ -313,7 +341,8 @@
                     </div>
                 </form>
             </div>
-            <!-- Results -->
+            
+            <!-- Results - Top Right -->
             <div class="card results-card">
                 <h3><i class="fas fa-chart-line"></i> Prediction Results</h3>
                 {% if prediction %}
@@ -327,14 +356,16 @@
                 {% endif %}
                 <div id="safeRangesDisplay"></div>
             </div>
-        </div>
-        <!-- Chart -->
-        <div class="chart-container">
-            <h3><i class="fas fa-chart-area"></i> Fault Probability Trend</h3>
-            <canvas id="chart" height="220"></canvas>
+            
+            <!-- Chart - Bottom Right -->
+            <div class="card chart-container">
+                <h3><i class="fas fa-chart-area"></i> Fault Probability Trend</h3>
+                <canvas id="chart"></canvas>
+            </div>
         </div>
     </div>
 </div>
+
 <script>
     let chart;
     var chartData = {{ chart_data|safe }};
@@ -422,6 +453,7 @@
         };
         const options = {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: true,
