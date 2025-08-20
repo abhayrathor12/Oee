@@ -361,14 +361,14 @@ label[for=nav-toggle] {
 }
 
 #nav-content::-webkit-scrollbar {
-  width: 8px;
+  width: 0px;
   height: 8px;
 }
 
-#nav-content::-webkit-scrollbar-thumb {
+/* #nav-content::-webkit-scrollbar-thumb {
   border-radius: 99px;
   background-color: #D62929;
-}
+} */
 
 #nav-content-highlight {
   position: absolute;
@@ -580,14 +580,14 @@ label[for=nav-footer-toggle] {
 }
 
 #nav-footer-content::-webkit-scrollbar {
-  width: 8px;
+  width: 0px;
   height: 8px;
 }
 
-#nav-footer-content::-webkit-scrollbar-thumb {
+/* #nav-footer-content::-webkit-scrollbar-thumb {
   border-radius: 99px;
   background-color: #D62929;
-}
+} */
 
 i.bx.bx-grid-alt {
 

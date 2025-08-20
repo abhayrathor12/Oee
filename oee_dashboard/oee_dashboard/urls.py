@@ -39,4 +39,7 @@ urlpatterns = [
     path("Alarmpage", views.Alarmpage, name="Alarmpage"),
     path("filter-alarms", views.filter_alarms, name="filter_alarms"),
     path("filter-production-data/", views.filter_production_data, name="filter_production_data"),
+    path("analytic_page", views.analytic_page, name="analytic_page"),
+    path('get_safe_ranges/', views.get_safe_ranges_view, name='get_safe_ranges'),
+    
 ]

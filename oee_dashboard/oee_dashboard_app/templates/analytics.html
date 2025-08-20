@@ -1,0 +1,481 @@
+{% extends 'home.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block extra_css %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        font-family: 'Roboto Mono', monospace;
+        margin: 0;
+        padding: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+    }
+    .main-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    canvas#chart {
+    width: 1175px;
+    height: 200px;
+}
+    h2 {
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+        align-items: start;
+    }
+    .card {
+        backdrop-filter: blur(6px);
+        border-radius: 10px;
+        padding: 10px 18px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        border: 1px solid rgba(255,255,255,0.17);
+        min-height: 0;
+    }
+    .form-card h3, .results-card h3, .chart-container h3 {
+        margin-top: 0;
+        color: white;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 1rem;
+    }
+    .slider-group {
+        margin-bottom: 12px;
+    }
+    .slider-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+        font-weight: 500;
+        color: #2d3748;
+        font-size: 0.95rem;
+    }
+    .value-display {
+        background: #667eea;
+        color: white;
+        padding: 1px 7px;
+        border-radius: 13px;
+        font-size: 12px;
+        min-width: 35px;
+        text-align: center;
+    }
+    .slider-container {
+        margin-bottom: 2px;
+    }
+    .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 4px;
+        border-radius: 3px;
+        background: #e2e8f0;
+        outline: none;
+        margin: 0;
+    }
+    .slider::-webkit-slider-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #667eea;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .slider::-webkit-slider-thumb:hover { background: #5a67d8; }
+    .slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #667eea;
+        cursor: pointer;
+        border: none;
+    }
+    .safe-range {
+        color: #38a169;
+        font-size: 11px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 0;
+    }
+    .safe-range i { font-size: 10px; }
+    .button-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    .btn {
+        flex: 1;
+        padding: 6px 9px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.93rem;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    .btn-secondary {
+        background: linear-gradient(135deg, #38a169 0%, #48bb78 100%);
+        color: white;
+    }
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 9px rgba(0,0,0,0.11);
+    }
+    .prediction-result {
+        text-align: center;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        font-size: 1.02rem;
+        font-weight: bold;
+    }
+    .fault-result {
+        background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+        color: white;
+        box-shadow: 0 3px 10px rgba(245,101,101,0.21);
+    }
+    .no-fault-result {
+        background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+        color: white;
+        box-shadow: 0 3px 10px rgba(72,187,120,0.21);
+    }
+    .safe-ranges-display {
+        border-radius: 7px;
+        padding: 8px;
+        margin-top: 8px;
+    }
+    .safe-ranges-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+        gap: 6px;
+    }
+    .safe-range-item {
+        padding: 6px;
+        border-radius: 6px;
+        border-left: 3px solid #38a169;
+        font-size: 13px;
+    }
+    .chart-container {
+        backdrop-filter: blur(6px);
+        border-radius: 10px;
+        padding: 10px 18px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        border: 1px solid rgba(255,255,255,0.17);
+        margin-top: 0;
+    }
+    .hide { display: none; }
+    #chart { min-height: 220px!important; }
+    @media (max-width: 1100px) {
+        .main-container { max-width: 98vw; }
+    }
+    @media (max-width: 900px) {
+        .dashboard-grid { grid-template-columns: 1fr; }
+        .chart-container { margin-top: 10px; }
+    }
+    @media (max-width: 480px) {
+        body { padding: 2px; }
+        .card, .chart-container { padding: 6px 2px; }
+        h2 { font-size: 1.1rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="home-section">
+    <div class="main-container">
+        <h2><i class="fas fa-cogs"></i> Machine Fault Prediction</h2>
+        <div class="dashboard-grid">
+            <!-- Input Form -->
+            <div class="card form-card">
+                <h3><i class="fas fa-sliders-h"></i> Control Parameters</h3>
+                <form method="POST" id="predictionForm">
+                    {% csrf_token %}
+                    
+                    <!-- Temperature -->
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span><i class="fas fa-thermometer-half"></i> Temperature</span>
+                            <span class="value-display" id="temperature_val">50°C</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" name="temperature" class="slider" min="0" max="120" value="50"
+                                   oninput="temperature_val.innerText = this.value + '°C'">
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Humidity -->
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span><i class="fas fa-tint"></i> Humidity</span>
+                            <span class="value-display" id="humidity_val">50%</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" name="humidity" class="slider" min="0" max="100" value="50"
+                                   oninput="humidity_val.innerText = this.value + '%'">
+                        </div>
+                       
+                    </div>
+                    
+                    <!-- RPM -->
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span><i class="fas fa-tachometer-alt"></i> RPM</span>
+                            <span class="value-display" id="rpm_val">1500</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" name="rpm" class="slider" min="500" max="3000" value="1500"
+                                   oninput="rpm_val.innerText = this.value">
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Gas Pressure -->
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span><i class="fas fa-gauge"></i> Gas Pressure</span>
+                            <span class="value-display" id="gas_pressure_val">5 bar</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" name="gas_pressure" class="slider" min="0" max="10" step="0.1" value="5"
+                                   oninput="gas_pressure_val.innerText = this.value + ' bar'">
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Frequency -->
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span><i class="fas fa-wave-square"></i> Frequency</span>
+                            <span class="value-display" id="frequency_val">50 Hz</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" name="frequency" class="slider" min="40" max="70" value="50"
+                                   oninput="frequency_val.innerText = this.value + ' Hz'">
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Current -->
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span><i class="fas fa-bolt"></i> Current</span>
+                            <span class="value-display" id="current_val">20 A</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" name="current" class="slider" min="0" max="100" value="20"
+                                   oninput="current_val.innerText = this.value + ' A'">
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Voltage -->
+                    <div class="slider-group">
+                        <div class="slider-label">
+                            <span><i class="fas fa-plug"></i> Voltage</span>
+                            <span class="value-display" id="voltage_val">220 V</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" name="voltage" class="slider" min="180" max="260" value="220"
+                                   oninput="voltage_val.innerText = this.value + ' V'">
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" name="predict" class="btn btn-primary"><i class="fas fa-search"></i> Predict</button>
+                        <button type="button" class="btn btn-secondary" id="toggleSafeRangesBtn">
+                            <i class="fas fa-shield-alt"></i> Show Safe Values
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- Results -->
+            <div class="card results-card">
+                <h3><i class="fas fa-chart-line"></i> Prediction Results</h3>
+                {% if prediction %}
+                    <div class="prediction-result {% if 'Fault' in prediction %}fault-result{% else %}no-fault-result{% endif %}">
+                        {{ prediction }} <br> (Probability: {{ probability }}%)
+                    </div>
+                {% else %}
+                    <div class="prediction-result" style="background: #18283b5e;color: #fbfcff;border: 1px solid rgba(128,128,128,0.5);">
+                        <i class="fas fa-info-circle"></i> Click predict to see results
+                    </div>
+                {% endif %}
+                <div id="safeRangesDisplay"></div>
+            </div>
+        </div>
+        <!-- Chart -->
+        <div class="chart-container">
+            <h3><i class="fas fa-chart-area"></i> Fault Probability Trend</h3>
+            <canvas id="chart" height="220"></canvas>
+        </div>
+    </div>
+</div>
+<script>
+    let chart;
+    var chartData = {{ chart_data|safe }};
+    let safeRangesVisible = false;
+    const btn = document.getElementById('toggleSafeRangesBtn');
+    const container = document.getElementById('safeRangesDisplay');
+
+    // Helper to show safe ranges
+    function showSafeRanges() {
+        fetch("{% url 'get_safe_ranges' %}", {
+            method: "GET",
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            let html = '';
+            if (data.safe_ranges) {
+                html += `<div class="safe-ranges-display">
+                    <h4 style="color: #38a169; text-align: center; margin-bottom: 6px;">
+                        <i class="fas fa-shield-alt"></i> Safe Operating Ranges
+                    </h4>
+                    <div class="safe-ranges-grid">`;
+                for (const param in data.safe_ranges) {
+                    html += `<div class="safe-range-item"><strong>${param.charAt(0).toUpperCase() + param.slice(1)}</strong><br>${data.safe_ranges[param].max} - ${data.safe_ranges[param].min}</div>`;
+                }
+                html += '</div></div>';
+            }
+            container.innerHTML = html;
+            safeRangesVisible = true;
+            btn.innerHTML = '<i class="fas fa-shield-alt"></i> Hide Safe Values';
+            localStorage.setItem('safeRangesVisible', 'true');
+        });
+    }
+
+    // Helper to hide safe ranges
+    function hideSafeRanges() {
+        container.innerHTML = '';
+        safeRangesVisible = false;
+        btn.innerHTML = '<i class="fas fa-shield-alt"></i> Show Safe Values';
+        localStorage.setItem('safeRangesVisible', 'false');
+    }
+
+    // Toggle button event
+    btn.addEventListener('click', function() {
+        if (!safeRangesVisible) {
+            showSafeRanges();
+        } else {
+            hideSafeRanges();
+        }
+    });
+
+    // Chart.js color logic
+    function getPointColors(data) {
+        return data.map(d => parseFloat(d.probability) > 50 ? '#e53e3e' : '#38a169');
+    }
+    function getLabels(data) {
+        return data.map((d, i) => `Prediction ${i+1}`);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (localStorage.getItem('safeRangesVisible') === 'true') {
+            showSafeRanges();
+        } else {
+            hideSafeRanges();
+        }
+        initChart();
+    });
+
+    function initChart() {
+        const ctx = document.getElementById('chart').getContext('2d');
+        const data = {
+            labels: getLabels(chartData),
+            datasets: [{
+                label: 'Fault Probability (%)',
+                data: chartData.map(d => d.probability),
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102,126,234,0.25)',
+                pointBackgroundColor: getPointColors(chartData),
+                pointBorderColor: '#fff',
+                pointRadius: 5,
+                pointHoverRadius: 8,
+                fill: true,
+                tension: 0.35,
+            }]
+        };
+        const options = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: { color: '#667eea', font: { weight: 'bold' } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `Probability: ${context.parsed.y}%`;
+                        }
+                    }
+                },
+                title: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Prediction Count',
+                        color: '#9d9faf',
+                        font: { size: 13 }
+                    },
+                    ticks: { color: '#9d9faf', font: { size: 12 } }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Probability (%)',
+                        color: '#9d9faf',
+                        font: { size: 13 }
+                    },
+                    min: 0,
+                    max: 100,
+                    ticks: { color: '#9d9faf', font: { size: 12 } }
+                }
+            }
+        };
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: options
+        });
+    }
+
+    // If you want to update chart after new prediction, make a function like below:
+    function updateChart(newData) {
+        if (chart) {
+            chart.data.labels = getLabels(newData);
+            chart.data.datasets[0].data = newData.map(d => d.probability);
+            chart.data.datasets[0].pointBackgroundColor = getPointColors(newData);
+            chart.update();
+        }
+    }
+</script>
+{% endblock %}

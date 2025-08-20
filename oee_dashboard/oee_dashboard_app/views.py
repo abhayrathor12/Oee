@@ -1657,3 +1657,152 @@ def filter_production_data(request):
         "production": production_data,
         "alarms": alarms,
     })
+    
+    
+    
+ 
+# def analytic_page(request):
+#     return render(request,'analytics.html')  
+
+
+
+from django.shortcuts import render
+from django.http import JsonResponse
+import joblib
+import numpy as np
+import json
+
+# Load trained model (same as in Flask)
+model = joblib.load("best_model_for.pkl")
+
+# Store history (for trend chart)
+history = []
+    
+def get_safe_ranges_from_forest(model, scaler=None):
+    """
+    Extract safe feature ranges from RandomForest by collecting conditions
+    that lead to class 0 (No Fault).
+    """
+    feature_names = ["temperature", "humidity", "rpm", "gas_pressure", "frequency", "current", "voltage"]
+
+    # If model is a pipeline, take last step (RandomForest)
+    if hasattr(model, "named_steps"):
+        rf_model = list(model.named_steps.values())[-1]
+    else:
+        rf_model = model
+
+    if not hasattr(rf_model, "estimators_"):
+        return {"error": "Model is not a RandomForestClassifier"}
+
+    safe_conditions = {f: [] for f in feature_names}
+
+    for estimator in rf_model.estimators_:
+        tree = estimator.tree_
+
+        def traverse(node, constraints):
+            if tree.feature[node] != -2:  # not a leaf
+                feat = tree.feature[node]
+                thresh = tree.threshold[node]
+
+                left_constraints = constraints.copy()
+                left_constraints.append((feat, "<=", thresh))
+                traverse(tree.children_left[node], left_constraints)
+
+                right_constraints = constraints.copy()
+                right_constraints.append((feat, ">", thresh))
+                traverse(tree.children_right[node], right_constraints)
+            else:
+                # leaf node
+                values = tree.value[node][0]
+                pred_class = np.argmax(values)
+                if pred_class == 0:  # class 0 = No Fault
+                    for feat, op, thresh in constraints:
+                        safe_conditions[feature_names[feat]].append((op, thresh))
+
+        traverse(0, [])
+
+    # Convert constraints into min/max ranges
+    safe_ranges = {}
+    for feat, conds in safe_conditions.items():
+        lowers = [t for op, t in conds if op == ">" ]
+        uppers = [t for op, t in conds if op == "<="]
+        if lowers or uppers:
+            min_val = max(lowers) if lowers else -np.inf
+            max_val = min(uppers) if uppers else np.inf
+
+            # Inverse transform thresholds if scaler exists
+            if scaler is not None:
+                idx = feature_names.index(feat)
+                dummy = np.zeros((1, len(feature_names)))
+                dummy[0, idx] = min_val
+                min_val = scaler.inverse_transform(dummy)[0, idx] if min_val != -np.inf else min_val
+                dummy[0, idx] = max_val
+                max_val = scaler.inverse_transform(dummy)[0, idx] if max_val != np.inf else max_val
+
+            safe_ranges[feat] = {"min": round(min_val, 2), "max": round(max_val, 2)}
+
+
+    return safe_ranges
+
+
+def get_safe_ranges_view(request):
+    scaler = model.named_steps.get("scaler", None) if hasattr(model, "named_steps") else None
+    safe_ranges = get_safe_ranges_from_forest(model, scaler=scaler)
+    return JsonResponse({"safe_ranges": safe_ranges})
+
+# Django view
+def analytic_page(request):
+    prediction = None
+    probability = None
+    chart_data = []
+    safe_ranges = None
+
+    if request.method == "POST":
+        if "predict" in request.POST:
+            # Get input values from form
+            temperature = float(request.POST.get("temperature"))
+            humidity = float(request.POST.get("humidity"))
+            rpm = float(request.POST.get("rpm"))
+            gas_pressure = float(request.POST.get("gas_pressure"))
+            frequency = float(request.POST.get("frequency"))
+            current = float(request.POST.get("current"))
+            voltage = float(request.POST.get("voltage"))
+
+            # Create input array
+            features = np.array([[temperature, humidity, rpm, gas_pressure, frequency, current, voltage]])
+
+            # Predict probability
+            prob = model.predict_proba(features)[0][1]  # probability of fault
+            probability = round(prob * 100, 2)
+
+            # Predict class
+            result = model.predict(features)[0]
+            prediction = "⚠️ Fault Occur" if result == 1 else "✅ No Fault"
+
+            # Save to history
+            history.append({
+                "temperature": temperature,
+                "humidity": humidity,
+                "rpm": rpm,
+                "gas_pressure": gas_pressure,
+                "frequency": frequency,
+                "current": current,
+                "voltage": voltage,
+                "probability": probability
+            })
+
+            # Keep last 20 records
+            if len(history) > 20:
+                history.pop(0)
+
+            chart_data = history
+
+
+
+    return render(request, "analytics.html", {
+        "prediction": prediction,
+        "probability": probability,
+        "chart_data": json.dumps(chart_data),
+    
+    })
+
